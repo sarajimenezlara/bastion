@@ -1,0 +1,81 @@
+¡Hola! Menudo análisis técnico tan fantástico. El test de simulación a 60 ticks/s con diferentes estrategias es la prueba de fuego definitiva para detectar desequilibrios en el diseño de juego.
+
+Con los datos que aportas, el diagnóstico es **100% certero**:
+
+1. **Pared de Armadura:** La fórmula $\max(1, \text{Daño} - \text{Armadura})$ anula el DPS de la Ballesta y del Cañón frente a blindados (haciendo solo el 1 de daño mínimo por impacto).
+2. **Estrangulamiento Económico:** 530 de oro acumulado al llegar a la oleada 5 impide tener suficiente masa crítica de Arcanas (150 de oro) o Cañones/Escarchas mejorados.
+3. **El Muro del Gólem (Oleada 5):** 1.888 HP efectivos con 25 de armadura es invencible para la economía del jugador en ese punto.
+
+Para lograr nuestro objetivo de diseño (**recompensar el juego estratégico, permitir victorias cómodas jugando con cabeza y mantener las oleadas 9-10 como reto exigente**), he recalibrado los parámetros manteniendo intactos los costes base, fórmulas de mejora y de reventa, multiplicador 1.12 y 20 vidas.
+
+Aquí tienes la propuesta de **Balance v2.1**:
+
+---
+
+## 1. Tabla de Cambios: Valor Anterior $\rightarrow$ Valor Nuevo $\rightarrow$ Motivo
+
+| Parámetro | Valor Anterior | Valor Nuevo | Motivo de Diseño |
+| --- | --- | --- | --- |
+| **Oro Inicial** | 150 | **220** | Permite una apertura más flexible (ej. Arcana + Ballesta o 2 Cañones) desde el segundo 0. |
+| **Daño Base Ballesta (N1 / N2 / N3)** | 12 / 22 / 38 | **18 / 32 / 52** | Evita que sea inútil contra armadura baja/media (Guerreros) y mejora su DPS por oro. |
+| **Daño Base Cañón (N1 / N2 / N3)** | 30 / 60 / 105 | **45 / 85 / 140** | Garantiza que su daño AoE compense la baja cadencia de tiro frente a Enjambres y Guerreros. |
+| **Armadura: Guerrero** | 5 | **3** | La Ballesta N1 pasa de hacer 7 a hacer 15 de daño neto por impacto. |
+| **Armadura: Tanque** | 15 | **8** | Permite que las torres físicas aporten daño real en lugar de quedar reducidas al mínimo de 1. |
+| **Armadura: Gólem de Bastión** | 25 | **12** | Permite que una combinación de Arcana + Ballestas enfocadas pueda derribarlo a tiempo. |
+| **Recompensa Oro: Guerrero** | 8 | **10** | Aumenta el flujo de caja intermedio. |
+| **Recompensa Oro: Tanque** | 18 | **25** | Recompensa adecuadamente la inversión necesaria para eliminar unidades pesadas. |
+| **Recompensa Fin de Oleada (1 a 10)** | 25 a 150 | **40 a 200** (+30% aprox) | Inyecta la liquidez necesaria para preparar las defensas frente a los saltos de dificultad. |
+
+---
+
+## 2. Tablas Ajustadas para el GDD v2.1
+
+### Tabla 1: Catálogo y Balance de Torres (Con Ajuste de Daño en Ballesta y Cañón)
+
+| Torre | Coste Base (N1) | Nivel | Coste Mejora | Rango (px) | Daño | Cadencia (disparos/s) | Vel. Proyectil (px/s) | Tipo Daño | Efecto Especial / AoE |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Ballesta** | **50** | 1 | - | 120 | **18** | 1.5 | 400 | Físico | Mono-objetivo |
+|  |  | 2 | 100 | 135 | **32** | 1.8 | 450 | Físico | Mono-objetivo |
+|  |  | 3 | 150 | 150 | **52** | 2.2 | 500 | Físico | Mono-objetivo |
+| **Cañón** | **100** | 1 | - | 100 | **45** | 0.5 | 250 | Físico | AoE Radio: 50px |
+|  |  | 2 | 200 | 115 | **85** | 0.6 | 280 | Físico | AoE Radio: 60px |
+|  |  | 3 | 300 | 130 | **140** | 0.7 | 320 | Físico | AoE Radio: 70px |
+| **Escarcha** | **80** | 1 | - | 90 | 5 | 0.8 | 300 | Mágico | Ralentiza 40% / 2s |
+|  |  | 2 | 160 | 100 | 12 | 1.0 | 330 | Mágico | Ralentiza 40% / 2s |
+|  |  | 3 | 240 | 110 | 25 | 1.2 | 360 | Mágico | Ralentiza 40% / 2s |
+| **Arcana** | **150** | 1 | - | 140 | 45 | 0.7 | 350 | Mágico | Ignora Armadura |
+|  |  | 2 | 300 | 155 | 90 | 0.8 | 400 | Mágico | Ignora Armadura |
+|  |  | 3 | 450 | 170 | 160 | 0.9 | 450 | Mágico | Ignora Armadura |
+
+---
+
+### Tabla 2: Catálogo y Balance Base de Enemigos
+
+| Enemigo | Vida Base | Velocidad (px/s) | Armadura | Recompensa (Oro) | Daño a Meta | Descripción |
+| --- | --- | --- | --- | --- | --- | --- |
+| **Enjambre** | 25 | 60 | 0 | 2 | 1 | Muy rápido, sale en masa |
+| **Duende** | 50 | 85 | 0 | 4 | 1 | Rápido, poca salud |
+| **Guerrero** | 120 | 50 | **3** | **10** | 1 | Equilibrado con armadura ligera |
+| **Tanque** | 350 | 30 | **8** | **25** | 1 | Lento, armadura moderada |
+| **Gólem de Bastión (Jefe)** | 1200 | 20 | **12** | 100 | 5 | Exclusivo de oleadas 5 y 10 |
+
+---
+
+### Tabla 3: Configuración Fija de las 10 Oleadas y Recompensas
+
+| Oleada | Composición de Enemigos (Tipo, Cantidad, Intervalo Spawn) | Recompensa Fin Oleada |
+| --- | --- | --- |
+| **1** | 10x Enjambre (0.6s) | **40 oro** |
+| **2** | 8x Duende (0.8s), 4x Guerrero (1.2s) | **45 oro** |
+| **3** | 15x Enjambre (0.5s), 6x Duende (0.7s) | **50 oro** |
+| **4** | 10x Guerrero (1.0s), 2x Tanque (2.5s) | **60 oro** |
+| **5** | **1x Gólem de Bastión (Jefe)**, 10x Guerrero (1.0s) | **100 oro** |
+| **6** | 25x Enjambre (0.4s), 5x Tanque (2.0s) | **75 oro** |
+| **7** | 15x Duende (0.6s), 10x Guerrero (0.8s), 4x Tanque (1.8s) | **85 oro** |
+| **8** | 30x Enjambre (0.3s), 8x Tanque (1.5s) | **100 oro** |
+| **9** | 20x Duende (0.5s), 15x Guerrero (0.7s), 6x Tanque (1.5s) | **120 oro** |
+| **10** | **2x Gólem de Bastión (Jefe)** (Intervalo 5s), 20x Guerrero (0.6s), 10x Tanque (1.2s) | **200 oro** |
+
+---
+
+¿Qué te parece este reajuste para pasar los datos a OpenCode y relanzar la simulación de partidas?

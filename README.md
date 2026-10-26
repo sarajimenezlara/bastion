@@ -28,7 +28,7 @@ tiene al menos una prueba cuyo nombre empieza por su código (`CA-01`, `CA-02`, 
 | 1 | Módulos del core (`Vector2D`, `Enemy`, `Map`, `WaveManager`, `GameEngine`) con UMD | ✅ Completada |
 | 2 | Sistema de construcción: `Tower`, `TowerManager`, rejilla construible, costes y reventa | ✅ Completada |
 | 3 | Combate, proyectiles, tolerancia de 8 px y tipos de daño | ✅ Completada |
-| 4 | `WaveManager` completo, escalado de salud e integración del motor | ⏳ Pendiente |
+| 4 | `WaveManager` completo, escalado de salud e integración del motor (`GameEngine`, vidas, victoria/derrota) | ✅ Completada |
 | 5 | `CanvasRenderer` y `UIController` (HTML/DOM) | ⏳ Pendiente |
 | 6 | Pantallas superpuestas, atajos de teclado y `localStorage` | ⏳ Pendiente |
 
@@ -72,12 +72,28 @@ Piezas añadidas:
 
 - `src/core/Projectile.js` — movimiento con paso limitado a la distancia restante, tolerancia de impacto de 8 px, daño mono-objetivo y AoE, y ralentización.
 - `Tower` — `position` en píxeles, `findTarget`, `update` (cadencia y disparo), `upgrade`, `getUpgradeCost` y `getUpgradeCost(type, targetLevel)`.
-- `GameEngine` — `upgradeTower`, `createProjectile` y `tick` (combate de enemigos, torres y proyectiles; las oleadas y las vidas llegan en la Fase 4).
+- `GameEngine` — `upgradeTower`, `createProjectile` y `tick` (combate de enemigos, torres y proyectiles).
 - `TowerManager` — la torre recibe el centro real de su casilla desde `Map.cellCenter`.
 
 Decisiones de diseño de la fase: [`docs/decisiones/fase-3.md`](docs/decisiones/fase-3.md).
 
+### Fase 4 — Gestor de oleadas y lógica de partida
+
+Criterios cubiertos y verificados con `npm test`:
+
+- **CA-11** — `WaveManager.getScaledHealth` y `WaveManager.getEnemyHealth` aplican `Math.floor(VidaBase × 1.12^(N-1))` para los cinco tipos de enemigo de la Tabla 2; el `GameEngine` genera cada enemigo con la vida de su oleada (incluidos los jefes de las oleadas 5 y 10).
+- **CA-12** — Un enemigo que cruza la meta resta 1 vida; el Gólem de Bastión resta 5 (Tabla 2). Las vidas nunca bajan de 0, el enemigo se retira de la partida y la derrota (`DEFEAT`) es inmediata.
+- **CA-13** — Al terminar la oleada 10 (todos los grupos han salido y el mapa está vacío) con vidas > 0, el estado pasa a `VICTORY` y `score = totalGoldEarned + vidas × 50`. La derrota tiene prioridad sobre la victoria en el mismo tick.
+
+Piezas añadidas:
+
+- `src/core/WaveManager.js` — catálogo de enemigos de la Tabla 2, las 10 oleadas de la Tabla 3, un flujo de spawn independiente por grupo (todos arrancan a la vez, el jefe no pausa al resto), cola ordenada por tiempo, vida escalada con `Math.floor` y cierre de oleada.
+- `GameEngine` — `tick` centralizado (oleadas → enemigos → torres → proyectiles → limpieza → estado), `spawnEnemy`, `startNextWave`, `earlyWaveCall`, `getGoalDamage`, `cleanupEnemies`, `updateWaveState` y `calculateFinalScore`.
+- `GameEngine.state` — `MENU` → `PLAYING` → `VICTORY` / `DEFEAT` (la decisión 3 de la fase fija `DEFEAT` donde el GDD escribía `GAMEOVER`).
+
+Decisiones de diseño de la fase: [`docs/decisiones/fase-4.md`](docs/decisiones/fase-4.md).
+
 Fuera de alcance en esta fase (se implementan después según el roadmap):
 
-- Generación de oleadas, escalado de salud, vidas, victoria/derrota y puntuación → Fase 4 (CA-11 a CA-13).
-- Renderizado, HUD, atajos e `index.html` → Fases 5 y 6.
+- Renderizado, HUD, bucle de dibujo y `index.html` → Fases 5 y 6.
+- Pantallas superpuestas, atajos de teclado y `localStorage` → Fase 6.

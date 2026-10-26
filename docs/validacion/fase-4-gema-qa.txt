@@ -1,0 +1,50 @@
+Bastión · Revisora QA
+Gem personalizado
+Bastión · Revisora QA ha dicho
+1. Resumen de Evaluación
+
+Fase evaluada: Fase 4 (Oleadas, Vidas, Escalado de Enemigos y Condición de Victoria/Derrota)
+
+Estado general: APTO
+
+2. Tabla de Criterios de Aceptación
+Criterio	Estado	Evidencia / Justificación
+CA-11 [AUTOMÁTICO - node --test]: La salud de los enemigos generados en la oleada 
+N debe ser calculada exactamente como 
+Math.floor(VidaBase×1.12
+(N−1)
+).	CUMPLE	Verificado en WaveManager.getScaledHealth (src/core/WaveManager.js, líneas 142-149) aplicando estrictamente Math.floor(baseHealth * Math.pow(1.12, waveNumber - 1)). Validado contra los tests en tests/CA-11_wave_health_scaling.test.js (6 tests pasados).
+CA-12 [AUTOMÁTICO - node --test]: Un enemigo normal que cruce la meta resta 1 vida. El Jefe Gólem de Bastión resta 5 vidas.	CUMPLE	Verificado en GameEngine.getGoalDamage y GameEngine.spawnEnemy (src/core/GameEngine.js, líneas 167-187) asignando goalDamage: 5 para jefes (Golem) y 1 para normales. Se aplica en el bucle tick (src/core/GameEngine.js, líneas 301-304) sustrayendo de this.lives. Validado contra tests/CA-12_lives_goal_damage.test.js (6 tests pasados).
+CA-13 [AUTOMÁTICO - node --test]: Derrotar todos los enemigos de la oleada 10 con vidas 
+>0 pasa el juego a estado VICTORY y calcula la puntuación final como 
+OroGanado+(Vidas×50).	CUMPLE	Verificado en GameEngine.updateWaveState y calculateFinalScore (src/core/GameEngine.js, líneas 267-285 y 228-230). Se valida la condición de campaña completa (completedWaves >= 10), asignando el estado 'VICTORY' y calculando this.totalGoldEarned + this.lives * 50. Validado contra tests/CA-13_victory_score.test.js (8 tests pasados).
+3. Análisis de Riesgos y Calidad
+
+Rendimiento y Loop de Juego:
+
+La iteración sobre la cola de spawns (WaveManager.update) utiliza un margen TIME_EPSILON (1e-9) apropiado para evitar desviaciones por precisión flotante.
+
+La remoción de enemigos muertos y procesados en GameEngine.cleanupEnemies se realiza mediante filtrado inmutable al final del tick en lugar de modificaciones directas con splice durante las iteraciones, garantizando estabilidad en el bucle principal.
+
+La navegación de enemigos (Enemy.update) gestiona eficientemente el consumo parcial de deltas de tiempo permitiendo atravesar múltiples waypoints en un mismo frame con protección contra bucles infinitos (iterations < 1000).
+
+Lógica y Arquitectura:
+
+El desacoplamiento entre WaveManager (lógica pura de eventos/colas de spawn) y GameEngine (orquestación de estado, oro, vidas y entidades) cumple con un diseño modular robusto y fácil de auditar.
+
+La prioridad del estado DEFEAT sobre la victoria en el mismo tick (src/core/GameEngine.js, líneas 307-312) previene condiciones de carrera o inconsistencias cuando un enemigo cruza la meta simultáneamente con la resolución de la oleada.
+
+Mantenibilidad:
+
+El patrón UMD simplificado implementado permite que las clases funcionen sin modificaciones tanto en entorno Node.js (node --test) como en navegadores Web (window).
+
+Cobertura completa de pruebas (79 tests ejecutados en 97.22ms sin ningún fallo ni cancelación).
+
+4. Veredicto Final y Pasos a Seguir
+
+VEREDICTO: APTO
+
+La entrega de la Fase 4 cumple con rigurosidad matemática y lógica todos los Criterios de Aceptación (CA-11, CA-12 y CA-13). El código no presenta fugas de memoria, code smells ni degradaciones de rendimiento en el motor de juego. No se requieren acciones correctivas.
+
+Para continuar con la evolución del proyecto:
+Generar el informe de auditoría QA consolidado de la Fase 4

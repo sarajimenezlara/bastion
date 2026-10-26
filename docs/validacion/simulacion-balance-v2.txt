@@ -1,0 +1,6 @@
+Estrategia             Resultado Oleada Vidas Torres Puntuación
+Sin torres             DEFEAT       2/10     0      0        175
+Solo ballestas         DEFEAT       7/10     0     16        813
+Mixta                  DEFEAT       5/10     0      4        422
+Ballestas y arcanas    DEFEAT       4/10     0      3        336
+Cañones y escarcha     DEFEAT       4/10     0      3        338
