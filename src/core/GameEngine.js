@@ -3,11 +3,11 @@
 // Fase 3: mejora de torres, selección de objetivo, disparo y proyectiles (CA-07 a CA-10).
 // Fase 4: oleadas, vidas, victoria/derrota y puntuación (CA-11 a CA-13).
 
-const MapRef =
-  typeof window !== 'undefined' && window.Map
-    ? window.Map
+const GameMapRef =
+  typeof window !== 'undefined' && window.GameMap
+    ? window.GameMap
     : typeof require !== 'undefined'
-      ? require('./Map.js')
+      ? require('./GameMap.js')
       : null;
 
 const WaveManagerRef =
@@ -48,8 +48,8 @@ const EnemyRef =
 class GameEngine {
   constructor() {
     this.lives = 20;
-    this.gold = 150;
-    this.totalGoldEarned = 150;
+    this.gold = 220;
+    this.totalGoldEarned = 220;
     this.score = 0;
     this.isPaused = false;
     this.gameSpeed = 1; // 1x o 2x
@@ -58,7 +58,7 @@ class GameEngine {
     // docs/decisiones/fase-4.md fija el nombre 'DEFEAT'.
     this.state = 'MENU';
 
-    this.map = new MapRef();
+    this.map = new GameMapRef();
     this.towers = [];
     this.enemies = [];
     this.projectiles = [];
@@ -189,6 +189,12 @@ class GameEngine {
         ? 5
         : 1;
 
+    // Oleada de procedencia: permite cerrar y pagar cada oleada por separado
+    // cuando dos oleadas se solapan por una llamada anticipada (CA-17).
+    if (Number.isFinite(spawn.waveNumber)) {
+      enemy.waveNumber = spawn.waveNumber;
+    }
+
     // Los enemigos entran por la primera casilla del camino serpentina.
     const start = this.map.getWaypointsInPixels()[0];
     if (start) {
@@ -228,6 +234,32 @@ class GameEngine {
     return bonus;
   }
 
+  /**
+   * CA-17: lanza la siguiente oleada, aunque la actual siga activa.
+   * Sin oleada activa arranca la siguiente; si ya hay una y quedan oleadas,
+   * paga el bono de llamada anticipada y añade los grupos de la siguiente a la
+   * cola de spawn (sus enemigos empiezan a salir de inmediato).
+   * @returns {object|false} definición de la oleada lanzada o false si no procede
+   */
+  callNextWave() {
+    if (!this.waveManager.isWaveActive) {
+      const definition = this.waveManager.startNextWave();
+      if (!definition) return false;
+
+      this.state = 'PLAYING';
+      return definition;
+    }
+
+    if (!this.waveManager.hasMoreWaves()) return false;
+
+    this.earlyWaveCall();
+    const definition = this.waveManager.queueNextWave();
+    if (!definition) return false;
+
+    this.state = 'PLAYING';
+    return definition;
+  }
+
   /** GDD §2: puntuación final = OroGanado + (Vidas × 50). @returns {number} */
   calculateFinalScore() {
     return this.totalGoldEarned + this.lives * 50;
@@ -261,21 +293,29 @@ class GameEngine {
   }
 
   /**
-   * CA-13: cierra la oleada cuando no quedan spawns pendientes ni enemigos vivos,
-   * paga la recompensa de fin de oleada y declara la victoria tras la oleada 10.
+   * CA-13 / CA-17: cierra cada oleada cuando no le quedan spawns pendientes ni
+   * enemigos vivos, paga su recompensa de fin de oleada y declara la victoria
+   * tras completar la oleada 10. Las oleadas solapadas se pagan por separado.
    * @returns {void}
    */
   updateWaveState() {
     if (!this.waveManager.isWaveActive) return;
-    if (!this.waveManager.isSpawnQueueEmpty()) return;
-    if (this.enemies.length > 0) return;
 
-    const completed = this.waveManager.completeWave();
-    if (!completed) return;
+    for (const waveNumber of this.waveManager.getActiveWaves()) {
+      if (this.waveManager.getPendingForWave(waveNumber) > 0) continue;
 
-    const reward = Number(completed.reward) || 0;
-    this.gold += reward;
-    this.totalGoldEarned += reward;
+      const alive = this.enemies.some(
+        (enemy) => enemy && enemy.waveNumber === waveNumber
+      );
+      if (alive) continue;
+
+      const completed = this.waveManager.completeWave(waveNumber);
+      if (!completed) continue;
+
+      const reward = Number(completed.reward) || 0;
+      this.gold += reward;
+      this.totalGoldEarned += reward;
+    }
 
     if (this.waveManager.isCampaignComplete()) {
       this.state = 'VICTORY';

@@ -1,4 +1,5 @@
-// Map: rejilla del tablero y camino serpentina definido por el GDD.
+// GameMap: rejilla del tablero y camino serpentina definido por el GDD.
+// El nombre evita pisar el Map nativo de JavaScript en el ámbito global del navegador.
 // Patrón UMD simplificado: compatible con navegador (window) y node --test (CommonJS).
 
 const Vector2DRefMap =
@@ -8,7 +9,7 @@ const Vector2DRefMap =
       ? require('./Vector2D.js')
       : null;
 
-class Map {
+class GameMap {
   constructor(cols = 20, rows = 12, tileSize = 40) {
     this.cols = cols;
     this.rows = rows;
@@ -176,8 +177,8 @@ class Map {
 }
 
 if (typeof window !== 'undefined') {
-  window.Map = Map;
+  window.GameMap = GameMap;
 }
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = Map;
+  module.exports = GameMap;
 }

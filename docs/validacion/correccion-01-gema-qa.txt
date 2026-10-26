@@ -1,0 +1,52 @@
+Bastión · Revisora QA
+Gem personalizado
+Bastión · Revisora QA ha dicho
+1. Resumen de Evaluación
+
+Fase evaluada: Corrección 01 (Post-Fase 4 · Hallazgos de prueba de integración y balance)
+
+Estado general: APTO
+
+2. Tabla de Criterios de Aceptación
+Criterio	Estado	Evidencia / Justificación
+Punto 1: Balance v2.1	CUMPLE	Comprobado en la salida de npm test: CA-01 valida el arranque con 220 de oro inicial; CA-18 valida el comportamiento de victoria/derrota ajustado al balance v2.1. La simulación (npm run simular) confirma los resultados esperados según balance-v2.1.md (estrategia "Medio con mejoras" logra VICTORY en oleada 10/10 con 20 vidas).
+Punto 2: Conflicto de clase Map	CUMPLE	Cita en npm test: CA-01 ("...mapa 20x12 con casillas de 40 px") y CA-03 ("...generados por GameMap"). Los test ejecutan la suite sobre GameMap (src/core/GameMap.js) evitando colisionar con el prototipo nativo window.Map de JavaScript en navegador.
+Punto 3: Oleada anticipada y CA-17	CUMPLE	Evidencia directa en el código entregado de GameEngine.js (callNextWave(), ll. 244-261) invocando earlyWaveCall() y queueNextWave(). Verificado en test tests/CA-17_early_wave.test.js: pasa los 4 sub-tests unitarios (bono de 27 oro con 6 pendientes, recompensa por oleada solapada, llamada sin oleada activa y bloqueo tras oleada 10). Salida en test runner: ✔ CA-17 lanzar la oleada 2 con 6 enemigos pendientes da 27 de oro y solapa ambas oleadas (5.615946ms).
+Punto 4: Criterio automático CA-18	CUMPLE	Implementado en tests/CA-18_balance_simulation.test.js importando directamente { play, ESTRATEGIAS } desde scripts/simular-balance.js sin duplicación de lógica. Verificado en salida de test suite: ✔ CA-18 «Sin torres» pierde antes de la oleada 4 (13.13ms) y ✔ CA-18 «Medio con mejoras» gana la partida (55.99ms). Total de 85/85 tests pasando exitosamente.
+3. Análisis de Riesgos y Calidad
+
+Rendimiento y Loop de Juego:
+
+GameEngine.callNextWave() encola los nuevos grupos a la cola de spawn activa sin reiniciar el bucle ni reinstanciar objetos de forma redundante.
+
+La limpieza de enemigos en cleanupEnemies() se mantiene por filtrado post-tick, evitando mutaciones del array durante la iteración (cero riesgo de inconsistencia de índices o memory leaks por referencias colgadas).
+
+Tiempo total de ejecución del test runner: 169.22 ms para 85 aserciones en Node Test Runner, demostrando alta velocidad y cero bloqueos.
+
+Lógica y Arquitectura:
+
+El renombrado a GameMap previene de forma efectiva la sobrescritura destructiva de window.Map, protegiendo las estructuras de datos nativas del navegador.
+
+El cálculo de recompensas y bonos se adhiere a las fórmulas del GDD v2.1 (
+⌊
+pendientes
+×
+2
+⌋
++
+15
+⌊pendientes×2⌋+15).
+
+Las oleadas solapadas contabilizan de manera aislada los completedWaves y las recompensas individuales al ser eliminados los enemigos de sus respectivos grupos (waveNumber).
+
+Mantenibilidad:
+
+Reutilizar el módulo scripts/simular-balance.js directamente dentro del test CA-18 respeta el principio DRY (Don't Repeat Yourself).
+
+Cobertura completa de casos de borde en CA-17 (intento de invocación tras la oleada 10 devuelve false correctamente).
+
+4. Veredicto Final y Pasos a Seguir
+
+VEREDICTO: APTO
+
+La corrección satisface completamente los 4 requerimientos técnicos presentados tras la prueba de integración de la Fase 4. La suite completa de 85 pruebas unitarias e integradas pasa satisfactoriamente, y el balance v2.1 ha sido verificado algorítmicamente. Se puede proceder con el empaquetado y el avance a la siguiente fase de desarrollo.

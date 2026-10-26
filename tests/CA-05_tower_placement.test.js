@@ -1,4 +1,4 @@
-// CA-05: construir una Ballesta (50 oro) baja el oro de 150 a 100 y reserva la casilla;
+// CA-05: construir una Ballesta (50 oro) baja el oro de 220 a 170 y reserva la casilla;
 // sin oro suficiente devuelve false.
 
 const test = require('node:test');
@@ -7,13 +7,13 @@ const assert = require('node:assert/strict');
 const GameEngine = require('../src/core/GameEngine.js');
 const Tower = require('../src/core/Tower.js');
 
-test('CA-05 construir una Ballesta deja el oro en 100 y reserva la casilla', () => {
+test('CA-05 construir una Ballesta deja el oro en 170 y reserva la casilla', () => {
   const engine = new GameEngine();
 
   const tower = engine.placeTower('Ballesta', 3, 3);
 
   assert.ok(tower instanceof Tower);
-  assert.equal(engine.gold, 100);
+  assert.equal(engine.gold, 170);
   assert.equal(engine.towers.length, 1);
   assert.equal(engine.towers[0], tower);
   assert.equal(tower.type, 'Ballesta');
@@ -48,7 +48,7 @@ test('CA-05 no se puede construir sobre el camino ni fuera de la rejilla', () =>
   assert.equal(engine.placeTower('Ballesta', 20, 0), false);
   assert.equal(engine.placeTower('Ballesta', 0, 12), false);
 
-  assert.equal(engine.gold, 150);
+  assert.equal(engine.gold, 220);
   assert.equal(engine.towers.length, 0);
 });
 
@@ -60,7 +60,7 @@ test('CA-05 no se puede construir dos veces en la misma casilla', () => {
 
   assert.ok(first);
   assert.equal(second, false);
-  assert.equal(engine.gold, 100);
+  assert.equal(engine.gold, 170);
   assert.equal(engine.towers.length, 1);
 });
 
@@ -68,7 +68,7 @@ test('CA-05 un tipo de torre desconocido devuelve false', () => {
   const engine = new GameEngine();
 
   assert.equal(engine.placeTower('Catapulta', 3, 3), false);
-  assert.equal(engine.gold, 150);
+  assert.equal(engine.gold, 220);
   assert.equal(engine.towers.length, 0);
 });
 
@@ -86,7 +86,7 @@ test('CA-05 cada tipo de torre descuenta el coste base de la Tabla 1', () => {
 
     assert.ok(tower, `${type} debería construirse`);
     assert.equal(tower.baseCost, cost);
-    assert.equal(engine.gold, 150 - cost, `${type} debe costar ${cost}`);
+    assert.equal(engine.gold, 220 - cost, `${type} debe costar ${cost}`);
   }
 });
 
@@ -112,7 +112,7 @@ test('CA-05 el catálogo expone los costes base y las estadísticas de nivel 1',
 
   const ballesta = Tower.getConfig('Ballesta', 1);
   assert.equal(ballesta.range, 120);
-  assert.equal(ballesta.damage, 12);
+  assert.equal(ballesta.damage, 18);
   assert.equal(ballesta.fireRate, 1.5);
   assert.equal(ballesta.projectileSpeed, 400);
   assert.equal(ballesta.damageType, 'PHYSICAL');

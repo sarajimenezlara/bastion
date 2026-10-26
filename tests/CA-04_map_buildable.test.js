@@ -3,10 +3,10 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const Map = require('../src/core/Map.js');
+const GameMap = require('../src/core/GameMap.js');
 
 test('CA-04 las casillas de los waypoints no son construibles', () => {
-  const map = new Map();
+  const map = new GameMap();
 
   for (const waypoint of map.waypoints) {
     assert.equal(
@@ -18,7 +18,7 @@ test('CA-04 las casillas de los waypoints no son construibles', () => {
 });
 
 test('CA-04 las casillas intermedias de cada tramo no son construibles', () => {
-  const map = new Map();
+  const map = new GameMap();
 
   const pathSamples = [
     [0, 2], [5, 2], [16, 2], [17, 2],
@@ -36,7 +36,7 @@ test('CA-04 las casillas intermedias de cada tramo no son construibles', () => {
 });
 
 test('CA-04 el camino serpentina ocupa exactamente 59 casillas', () => {
-  const map = new Map();
+  const map = new GameMap();
 
   assert.equal(map.pathCells.size, 59);
   for (const waypoint of map.waypoints) {
@@ -45,7 +45,7 @@ test('CA-04 el camino serpentina ocupa exactamente 59 casillas', () => {
 });
 
 test('CA-04 las casillas fuera del camino son construibles', () => {
-  const map = new Map();
+  const map = new GameMap();
 
   const freeCells = [
     [0, 0], [1, 0], [19, 0], [0, 1], [5, 1], [19, 1],
@@ -59,7 +59,7 @@ test('CA-04 las casillas fuera del camino son construibles', () => {
 });
 
 test('CA-04 las casillas fuera de la rejilla no son construibles', () => {
-  const map = new Map();
+  const map = new GameMap();
 
   assert.equal(map.isCellBuildable(-1, 0), false);
   assert.equal(map.isCellBuildable(0, -1), false);
@@ -70,7 +70,7 @@ test('CA-04 las casillas fuera de la rejilla no son construibles', () => {
 });
 
 test('CA-04 una casilla reservada por una torre deja de ser construible', () => {
-  const map = new Map();
+  const map = new GameMap();
 
   assert.equal(map.isCellBuildable(3, 3), true);
   assert.equal(map.occupyCell(3, 3), true);

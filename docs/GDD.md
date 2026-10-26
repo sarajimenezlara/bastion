@@ -1,11 +1,12 @@
-# GAME DESIGN DOCUMENT (GDD) v2.0
+# GAME DESIGN DOCUMENT (GDD) v2.1
 
 ## Proyecto «Bastión» — Tower Defense en JS Vanilla
 
 ---
 
-## 📋 Registro de Cambios (Changelog v2.0)
+## 📋 Registro de Cambios (Changelog v2.1)
 
+* **[v2.1 — Balance tras la simulación]**: La simulación de partidas completas (`npm run simular`) demostró que el balance v2.0 era imposible de ganar. Se aplican los valores de `docs/02-gemini/balance-v2.1.md`: oro inicial 220, daños de Ballesta (18/32/52) y Cañón (45/85/140), armaduras y recompensas de Guerrero (3/10), Tanque (8/25) y Gólem de Bastión (12/100), y recompensas de fin de oleada de 40 a 200.
 * **[Compatibilidad Dual Protocolo file:// y Node.js]**: Se ha modificado el patrón de exportación/importación del Core. Los módulos eliminan las sentencias ESM nativas (`import`/`export`) en el navegador para evitar el bloqueo CORS bajo el protocolo `file://` (doble clic en `index.html`). Se adopta el patrón CommonJS/Global (`window` para navegador, `module.exports` para `node --test`).
 * **[Balance de Torres - Costes Base]**: Se han añadido explícitamente los costes base de compra (Nivel 1) en la **Tabla 1**.
 * **[Aclaración CA-07 y Escalado de Upgrades]**: Se confirma que la fórmula $\text{CosteBase} \times \text{NivelDestino}$ coincide al 100% con los costes numéricos definidos en la Tabla 1. Se explicita la relación en la redacción del criterio.
@@ -30,7 +31,7 @@ Para garantizar que el juego funcione con **doble clic directo en `index.html**`
                                           v
 +-----------------------------------------------------------------------------------+
 |                                    GAME CORE                                      |
-|  - GameEngine, Map, WaveManager, TowerManager, EnemyManager, ProjectileManager    |
+|  - GameEngine, GameMap, WaveManager, TowerManager, EnemyManager, ProjectileManager |
 |  - Navegador: Registra clases en el espacio global `window`                       |
 |  - Node.js: Exporta módulos mediante `if (typeof module !== 'undefined')`         |
 +-----------------------------------------------------------------------------------+
@@ -74,7 +75,7 @@ class Vector2D {
   }
 }
 
-class Map {
+class GameMap {
   constructor(cols = 20, rows = 12, tileSize = 40) {
     this.cols = cols;
     this.rows = rows;
@@ -177,13 +178,13 @@ class WaveManager {
 class GameEngine {
   constructor() {
     this.lives = 20;
-    this.gold = 150;
-    this.totalGoldEarned = 150;
+    this.gold = 220;
+    this.totalGoldEarned = 220;
     this.score = 0;
     this.isPaused = false;
     this.gameSpeed = 1; // 1x o 2x
     this.state = 'MENU'; // 'MENU' | 'PLAYING' | 'VICTORY' | 'GAMEOVER'
-    this.map = new Map();
+    this.map = new GameMap();
     this.towers = [];
     this.enemies = [];
     this.projectiles = [];
@@ -195,6 +196,7 @@ class GameEngine {
   upgradeTower(towerId) { /* Ejecuta mejora */ }
   sellTower(towerId) { /* Ejecuta reventa y libera casilla */ }
   earlyWaveCall() { /* Bonus por llamada anticipada */ }
+  callNextWave() { /* Lanza la siguiente oleada, también si la actual sigue activa */ }
   calculateFinalScore() { return this.totalGoldEarned + (this.lives * 50); }
 }
 
@@ -247,12 +249,12 @@ $$\text{BonoOro} = \text{Math.floor}(\text{EnemigosPendientesEnCola} \times 2) +
 
 | Torre | Coste Base (N1) | Nivel | Coste Mejora | Rango (px) | Daño | Cadencia (disparos/s) | Vel. Proyectil (px/s) | Tipo Daño | Efecto Especial / AoE |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **Ballesta** | **50** | 1 | - | 120 | 12 | 1.5 | 400 | Físico | Mono-objetivo |
-|  |  | 2 | 100 | 135 | 22 | 1.8 | 450 | Físico | Mono-objetivo |
-|  |  | 3 | 150 | 150 | 38 | 2.2 | 500 | Físico | Mono-objetivo |
-| **Cañón** | **100** | 1 | - | 100 | 30 | 0.5 | 250 | Físico | AoE Radio: 50px |
-|  |  | 2 | 200 | 115 | 60 | 0.6 | 280 | Físico | AoE Radio: 60px |
-|  |  | 3 | 300 | 130 | 105 | 0.7 | 320 | Físico | AoE Radio: 70px |
+| **Ballesta** | **50** | 1 | - | 120 | 18 | 1.5 | 400 | Físico | Mono-objetivo |
+|  |  | 2 | 100 | 135 | 32 | 1.8 | 450 | Físico | Mono-objetivo |
+|  |  | 3 | 150 | 150 | 52 | 2.2 | 500 | Físico | Mono-objetivo |
+| **Cañón** | **100** | 1 | - | 100 | 45 | 0.5 | 250 | Físico | AoE Radio: 50px |
+|  |  | 2 | 200 | 115 | 85 | 0.6 | 280 | Físico | AoE Radio: 60px |
+|  |  | 3 | 300 | 130 | 140 | 0.7 | 320 | Físico | AoE Radio: 70px |
 | **Escarcha** | **80** | 1 | - | 90 | 5 | 0.8 | 300 | Mágico | Ralentiza 40% / 2s |
 |  |  | 2 | 160 | 100 | 12 | 1.0 | 330 | Mágico | Ralentiza 40% / 2s |
 |  |  | 3 | 240 | 110 | 25 | 1.2 | 360 | Mágico | Ralentiza 40% / 2s |
@@ -268,9 +270,9 @@ $$\text{BonoOro} = \text{Math.floor}(\text{EnemigosPendientesEnCola} \times 2) +
 | --- | --- | --- | --- | --- | --- | --- |
 | **Enjambre** | 25 | 60 | 0 | 2 | 1 | Muy rápido, sale en masa |
 | **Duende** | 50 | 85 | 0 | 4 | 1 | Rápido, poca salud |
-| **Guerrero** | 120 | 50 | 5 | 8 | 1 | Equilibrado con armadura |
-| **Tanque** | 350 | 30 | 15 | 18 | 1 | Lento, armadura elevada |
-| **Gólem de Bastión (Jefe)** | 1200 | 20 | 25 | 100 | 5 | Exclusivo de oleadas 5 y 10 |
+| **Guerrero** | 120 | 50 | 3 | 10 | 1 | Equilibrado con armadura ligera |
+| **Tanque** | 350 | 30 | 8 | 25 | 1 | Lento, armadura moderada |
+| **Gólem de Bastión (Jefe)** | 1200 | 20 | 12 | 100 | 5 | Exclusivo de oleadas 5 y 10 |
 
 ---
 
@@ -278,16 +280,16 @@ $$\text{BonoOro} = \text{Math.floor}(\text{EnemigosPendientesEnCola} \times 2) +
 
 | Oleada | Composición de Enemigos (Tipo, Cantidad, Intervalo Spawn) | Recompensa Fin Oleada |
 | --- | --- | --- |
-| **1** | 10x Enjambre (0.6s) | 25 oro |
-| **2** | 8x Duende (0.8s), 4x Guerrero (1.2s) | 30 oro |
-| **3** | 15x Enjambre (0.5s), 6x Duende (0.7s) | 35 oro |
-| **4** | 10x Guerrero (1.0s), 2x Tanque (2.5s) | 40 oro |
-| **5** | **1x Gólem de Bastión (Jefe)**, 10x Guerrero (1.0s) | 75 oro |
-| **6** | 25x Enjambre (0.4s), 5x Tanque (2.0s) | 50 oro |
-| **7** | 15x Duende (0.6s), 10x Guerrero (0.8s), 4x Tanque (1.8s) | 55 oro |
-| **8** | 30x Enjambre (0.3s), 8x Tanque (1.5s) | 60 oro |
-| **9** | 20x Duende (0.5s), 15x Guerrero (0.7s), 6x Tanque (1.5s) | 70 oro |
-| **10** | **2x Gólem de Bastión (Jefe)** (Intervalo 5s), 20x Guerrero (0.6s), 10x Tanque (1.2s) | 150 oro |
+| **1** | 10x Enjambre (0.6s) | 40 oro |
+| **2** | 8x Duende (0.8s), 4x Guerrero (1.2s) | 45 oro |
+| **3** | 15x Enjambre (0.5s), 6x Duende (0.7s) | 50 oro |
+| **4** | 10x Guerrero (1.0s), 2x Tanque (2.5s) | 60 oro |
+| **5** | **1x Gólem de Bastión (Jefe)**, 10x Guerrero (1.0s) | 100 oro |
+| **6** | 25x Enjambre (0.4s), 5x Tanque (2.0s) | 75 oro |
+| **7** | 15x Duende (0.6s), 10x Guerrero (0.8s), 4x Tanque (1.8s) | 85 oro |
+| **8** | 30x Enjambre (0.3s), 8x Tanque (1.5s) | 100 oro |
+| **9** | 20x Duende (0.5s), 15x Guerrero (0.7s), 6x Tanque (1.5s) | 120 oro |
+| **10** | **2x Gólem de Bastión (Jefe)** (Intervalo 5s), 20x Guerrero (0.6s), 10x Tanque (1.2s) | 200 oro |
 
 ---
 
@@ -297,8 +299,8 @@ $$\text{BonoOro} = \text{Math.floor}(\text{EnemigosPendientesEnCola} \times 2) +
 +-------------------------------------------------------------------------+
 | ROADMAP DE IMPLEMENTACIÓN                                               |
 +-------------------------------------------------------------------------+
-  FASE 1: Módulos del Core (Vector2D, Enemy, Map) con UMD (file:// + CommonJS)
-  FASE 2: Sistema de Construcción (Tower, Map grid, Costes e Inversión)
+  FASE 1: Módulos del Core (Vector2D, Enemy, GameMap) con UMD (file:// + CommonJS)
+  FASE 2: Sistema de Construcción (Tower, GameMap grid, Costes e Inversión)
   FASE 3: Combate, Proyectiles, Tolerancias (8px/2px) y Tipos de Daño
   FASE 4: WaveManager, Fórmula de Salud Math.floor e Integración del GameEngine
   FASE 5: Capa Visual CanvasRenderer y UIController (HTML/DOM)
@@ -313,14 +315,14 @@ $$\text{BonoOro} = \text{Math.floor}(\text{EnemigosPendientesEnCola} \times 2) +
 
 ### Fase 1: Módulos Lógicos del Core (Sin DOM ni CORS)
 
-* **`CA-01` [AUTOMÁTICO - `node --test`]:** La clase `GameEngine` debe instanciarse con 20 vidas, 150 de oro, oleada 0 y colecciones vacías.
+* **`CA-01` [AUTOMÁTICO - `node --test`]:** La clase `GameEngine` debe instanciarse con 20 vidas, 220 de oro, oleada 0 y colecciones vacías.
 * **`CA-02` [AUTOMÁTICO - `node --test`]:** El método `takeDamage` de `Enemy` debe reducir la vida calculando $\max(1, \text{Daño} - \text{Armadura})$ para daño físico y omitiendo la armadura en daño mágico.
 * **`CA-03` [AUTOMÁTICO - `node --test`]:** La navegación de `Enemy` debe detectar los waypoints cuando la distancia euclídea sea $\le 2\text{ px}$.
 
 ### Fase 2: Construcción, Terreno y Reventa
 
 * **`CA-04` [AUTOMÁTICO - `node --test`]:** El método `isCellBuildable(col, row)` devuelve `false` en las casillas ocupadas por el camino serpentina y `true` en el resto.
-* **`CA-05` [AUTOMÁTICO - `node --test`]:** Intentar construir una Ballesta (50 oro) reduce el oro de 150 a 100 y reserva la casilla. Si no hay oro suficiente, devuelve `false`.
+* **`CA-05` [AUTOMÁTICO - `node --test`]:** Intentar construir una Ballesta (50 oro) reduce el oro de 220 a 170 y reserva la casilla. Si no hay oro suficiente, devuelve `false`.
 * **`CA-06` [AUTOMÁTICO - `node --test`]:** La reventa de cualquier torre devuelve el $70\%$ (`Math.floor`) del total invertido (coste base + mejoras) y deja la casilla libre.
 
 ### Fase 3: Torres, Combat & Proyectiles
@@ -335,6 +337,11 @@ $$\text{BonoOro} = \text{Math.floor}(\text{EnemigosPendientesEnCola} \times 2) +
 * **`CA-11` [AUTOMÁTICO - `node --test`]:** La salud de los enemigos generados en la oleada $N$ debe ser calculada exactamente como $\text{Math.floor}\left(\text{VidaBase} \times 1.12^{(N - 1)}\right)$.
 * **`CA-12` [AUTOMÁTICO - `node --test`]:** Un enemigo normal que cruce la meta resta 1 vida. El Jefe Gólem de Bastión resta 5 vidas.
 * **`CA-13` [AUTOMÁTICO - `node --test`]:** Derrotar todos los enemigos de la oleada 10 con vidas $> 0$ pasa el juego a estado `VICTORY` y calcula la puntuación final como $\text{OroGanado} + (\text{Vidas} \times 50)$.
+
+### Corrección 01: Integración y Balance
+
+* **`CA-17` [AUTOMÁTICO - `node --test`]:** `GameEngine.callNextWave()` lanza la siguiente oleada. Si no hay ninguna activa, arranca la siguiente; si ya hay una y quedan oleadas, paga el bono de llamada anticipada ($\text{Math.floor}(\text{Pendientes} \times 2) + 15$) y añade los grupos de la siguiente a la cola de spawn, que empieza de inmediato. Lanzar la oleada 2 con 6 enemigos pendientes de la 1 otorga 27 de oro, la oleada actual pasa a ser la 2 y salen enemigos de ambas. Cada oleada paga su recompensa de fin al quedar terminada.
+* **`CA-18` [AUTOMÁTICO - `node --test`]:** La simulación de partidas completas de `scripts/simular-balance.js` (lógica reutilizada por la prueba, sin duplicarla) es un criterio de balance: «Sin torres» pierde antes de la oleada 4 y «Medio con mejoras» gana la partida.
 
 ### Fase 5 & 6: Renderizado, UI y Ejecución Directa file://
 

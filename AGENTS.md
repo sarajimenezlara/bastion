@@ -22,7 +22,7 @@ Compact guidance for working on the "Bastión" Tower Defense project.
 ## Implementation Flow
 Follow the Roadmap in `docs/GDD.md`:
 1. Core classes (UMD)
-2. Tower placement & Map grid
+2. Tower placement & GameMap grid
 3. Combat mechanics & Projectiles
 4. WaveManager & Engine logic
 5. Visuals & UI

@@ -10,7 +10,7 @@ const TowerRef =
 
 class TowerManager {
   /**
-   * @param {object} map instancia de Map (rejilla y casillas del camino)
+   * @param {object} map instancia de GameMap (rejilla y casillas del camino)
    * @param {Array} [towers] colección compartida con GameEngine (`engine.towers`)
    */
   constructor(map, towers = []) {

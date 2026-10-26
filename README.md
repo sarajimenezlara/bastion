@@ -25,7 +25,7 @@ tiene al menos una prueba cuyo nombre empieza por su código (`CA-01`, `CA-02`, 
 
 | Fase | Alcance | Estado |
 | --- | --- | --- |
-| 1 | Módulos del core (`Vector2D`, `Enemy`, `Map`, `WaveManager`, `GameEngine`) con UMD | ✅ Completada |
+| 1 | Módulos del core (`Vector2D`, `Enemy`, `GameMap`, `WaveManager`, `GameEngine`) con UMD | ✅ Completada |
 | 2 | Sistema de construcción: `Tower`, `TowerManager`, rejilla construible, costes y reventa | ✅ Completada |
 | 3 | Combate, proyectiles, tolerancia de 8 px y tipos de daño | ✅ Completada |
 | 4 | `WaveManager` completo, escalado de salud e integración del motor (`GameEngine`, vidas, victoria/derrota) | ✅ Completada |
@@ -36,7 +36,7 @@ tiene al menos una prueba cuyo nombre empieza por su código (`CA-01`, `CA-02`, 
 
 Criterios cubiertos y verificados con `npm test`:
 
-- **CA-01** — `GameEngine` arranca con 20 vidas, 150 de oro, oleada 0 y colecciones vacías.
+- **CA-01** — `GameEngine` arranca con 20 vidas, 220 de oro, oleada 0 y colecciones vacías.
 - **CA-02** — `Enemy.takeDamage` aplica `max(1, daño - armadura)` en físico e ignora la armadura en mágico.
 - **CA-03** — `Enemy.update` detecta los waypoints a una distancia euclídea ≤ 2 px.
 
@@ -46,15 +46,15 @@ Decisiones de diseño de la fase: [`docs/decisiones/fase-1.md`](docs/decisiones/
 
 Criterios cubiertos y verificados con `npm test`:
 
-- **CA-04** — `Map.isCellBuildable` devuelve `false` en las casillas del camino serpentina (59 casillas), en las ocupadas por una torre y fuera de la rejilla; `true` en el resto.
-- **CA-05** — `GameEngine.placeTower` construye una Ballesta y baja el oro de 150 a 100 reservando la casilla; sin oro, casilla inválida u ocupada devuelve `false` sin alterar el estado.
+- **CA-04** — `GameMap.isCellBuildable` devuelve `false` en las casillas del camino serpentina (59 casillas), en las ocupadas por una torre y fuera de la rejilla; `true` en el resto.
+- **CA-05** — `GameEngine.placeTower` construye una Ballesta y baja el oro de 220 a 170 reservando la casilla; sin oro, casilla inválida u ocupada devuelve `false` sin alterar el estado.
 - **CA-06** — `GameEngine.sellTower` devuelve `Math.floor(totalInvertido × 0.70)` (coste base + mejoras) y libera la casilla.
 
 Piezas añadidas:
 
 - `src/core/Tower.js` — entidad con nivel, inversión acumulada y catálogo de la Tabla 1 (costes y estadísticas por nivel).
 - `src/core/TowerManager.js` — colección de torres, reserva/liberación de casillas y reventa inmediata.
-- `Map` — relleno de `pathCells`, control de casillas ocupadas e `isCellBuildable`.
+- `GameMap` — relleno de `pathCells`, control de casillas ocupadas e `isCellBuildable`.
 - `GameEngine` — `placeTower` y `sellTower` junto al `TowerManager`, compartiendo la colección `engine.towers`.
 
 Decisiones de diseño de la fase: [`docs/decisiones/fase-2.md`](docs/decisiones/fase-2.md).
@@ -73,7 +73,7 @@ Piezas añadidas:
 - `src/core/Projectile.js` — movimiento con paso limitado a la distancia restante, tolerancia de impacto de 8 px, daño mono-objetivo y AoE, y ralentización.
 - `Tower` — `position` en píxeles, `findTarget`, `update` (cadencia y disparo), `upgrade`, `getUpgradeCost` y `getUpgradeCost(type, targetLevel)`.
 - `GameEngine` — `upgradeTower`, `createProjectile` y `tick` (combate de enemigos, torres y proyectiles).
-- `TowerManager` — la torre recibe el centro real de su casilla desde `Map.cellCenter`.
+- `TowerManager` — la torre recibe el centro real de su casilla desde `GameMap.cellCenter`.
 
 Decisiones de diseño de la fase: [`docs/decisiones/fase-3.md`](docs/decisiones/fase-3.md).
 

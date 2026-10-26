@@ -15,17 +15,17 @@ const TOWER_CONFIGS = {
   Ballesta: {
     baseCost: 50,
     levels: [
-      { upgradeCost: 0, range: 120, damage: 12, fireRate: 1.5, projectileSpeed: 400, damageType: 'PHYSICAL', areaOfEffect: 0, slowFactor: 0, slowDuration: 0 },
-      { upgradeCost: 100, range: 135, damage: 22, fireRate: 1.8, projectileSpeed: 450, damageType: 'PHYSICAL', areaOfEffect: 0, slowFactor: 0, slowDuration: 0 },
-      { upgradeCost: 150, range: 150, damage: 38, fireRate: 2.2, projectileSpeed: 500, damageType: 'PHYSICAL', areaOfEffect: 0, slowFactor: 0, slowDuration: 0 },
+      { upgradeCost: 0, range: 120, damage: 18, fireRate: 1.5, projectileSpeed: 400, damageType: 'PHYSICAL', areaOfEffect: 0, slowFactor: 0, slowDuration: 0 },
+      { upgradeCost: 100, range: 135, damage: 32, fireRate: 1.8, projectileSpeed: 450, damageType: 'PHYSICAL', areaOfEffect: 0, slowFactor: 0, slowDuration: 0 },
+      { upgradeCost: 150, range: 150, damage: 52, fireRate: 2.2, projectileSpeed: 500, damageType: 'PHYSICAL', areaOfEffect: 0, slowFactor: 0, slowDuration: 0 },
     ],
   },
   Canon: {
     baseCost: 100,
     levels: [
-      { upgradeCost: 0, range: 100, damage: 30, fireRate: 0.5, projectileSpeed: 250, damageType: 'PHYSICAL', areaOfEffect: 50, slowFactor: 0, slowDuration: 0 },
-      { upgradeCost: 200, range: 115, damage: 60, fireRate: 0.6, projectileSpeed: 280, damageType: 'PHYSICAL', areaOfEffect: 60, slowFactor: 0, slowDuration: 0 },
-      { upgradeCost: 300, range: 130, damage: 105, fireRate: 0.7, projectileSpeed: 320, damageType: 'PHYSICAL', areaOfEffect: 70, slowFactor: 0, slowDuration: 0 },
+      { upgradeCost: 0, range: 100, damage: 45, fireRate: 0.5, projectileSpeed: 250, damageType: 'PHYSICAL', areaOfEffect: 50, slowFactor: 0, slowDuration: 0 },
+      { upgradeCost: 200, range: 115, damage: 85, fireRate: 0.6, projectileSpeed: 280, damageType: 'PHYSICAL', areaOfEffect: 60, slowFactor: 0, slowDuration: 0 },
+      { upgradeCost: 300, range: 130, damage: 140, fireRate: 0.7, projectileSpeed: 320, damageType: 'PHYSICAL', areaOfEffect: 70, slowFactor: 0, slowDuration: 0 },
     ],
   },
   Escarcha: {

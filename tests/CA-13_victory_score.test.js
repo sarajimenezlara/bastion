@@ -40,11 +40,11 @@ test('CA-13 ganar la oleada 10 pasa a VICTORY y calcula la puntuación final', (
   assert.equal(engine.waveManager.completedWaves, 10);
   assert.equal(engine.state, 'VICTORY');
 
-  // Recompensas: 2×100 + 20×8 + 10×18 = 540 de enemigos, + 150 de fin de oleada.
-  assert.equal(engine.totalGoldEarned, 500 + 540 + 150);
-  assert.equal(engine.gold, 150 + 540 + 150);
-  // Puntuación = OroGanado + (Vidas × 50) = 1190 + 350.
-  assert.equal(engine.score, 1540);
+  // Recompensas: 2×100 + 20×10 + 10×25 = 650 de enemigos, + 200 de fin de oleada.
+  assert.equal(engine.totalGoldEarned, 500 + 650 + 200);
+  assert.equal(engine.gold, 220 + 650 + 200);
+  // Puntuación = OroGanado + (Vidas × 50) = 1350 + 350.
+  assert.equal(engine.score, 1700);
   assert.equal(engine.score, engine.calculateFinalScore());
 });
 
@@ -62,9 +62,9 @@ test('CA-13 completar la oleada 1 paga su recompensa y no declara la victoria', 
   assert.equal(engine.state, 'PLAYING');
   assert.equal(engine.waveManager.completedWaves, 1);
   assert.equal(engine.waveManager.currentWaveIndex, 1);
-  // 10 Enjambre × 2 de oro + 25 de recompensa de oleada.
-  assert.equal(engine.gold, 150 + 20 + 25);
-  assert.equal(engine.totalGoldEarned, 150 + 20 + 25);
+  // 10 Enjambre × 2 de oro + 40 de recompensa de oleada.
+  assert.equal(engine.gold, 220 + 20 + 40);
+  assert.equal(engine.totalGoldEarned, 220 + 20 + 40);
   assert.equal(engine.score, 0, 'la puntuación solo se fija al terminar la partida');
 });
 

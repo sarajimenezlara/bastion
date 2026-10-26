@@ -1,0 +1,9 @@
+Estrategia             Resultado Oleada Vidas Torres Puntuación
+Sin torres             DEFEAT       2/10     0      0        260
+Novato (4 ballestas)   DEFEAT       7/10     0      4        984
+Medio (8 mixtas)       DEFEAT       9/10     0      8       1911
+Medio con mejoras      VICTORY     10/10    20      8       4316
+Solo ballestas         VICTORY     10/10    20     16       4316
+Mixta                  VICTORY     10/10    20     16       4316
+Ballestas y arcanas    VICTORY     10/10    20     16       4316
+Cañones y escarcha     VICTORY     10/10    15     16       3966

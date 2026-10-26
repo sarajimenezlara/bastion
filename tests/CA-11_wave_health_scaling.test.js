@@ -29,9 +29,9 @@ test('CA-11 el catálogo base de enemigos coincide con la Tabla 2', () => {
   const expectedBase = {
     Enjambre: { baseHealth: 25, speed: 60, armor: 0, reward: 2, goalDamage: 1, isBoss: false },
     Duende: { baseHealth: 50, speed: 85, armor: 0, reward: 4, goalDamage: 1, isBoss: false },
-    Guerrero: { baseHealth: 120, speed: 50, armor: 5, reward: 8, goalDamage: 1, isBoss: false },
-    Tanque: { baseHealth: 350, speed: 30, armor: 15, reward: 18, goalDamage: 1, isBoss: false },
-    Golem: { baseHealth: 1200, speed: 20, armor: 25, reward: 100, goalDamage: 5, isBoss: true },
+    Guerrero: { baseHealth: 120, speed: 50, armor: 3, reward: 10, goalDamage: 1, isBoss: false },
+    Tanque: { baseHealth: 350, speed: 30, armor: 8, reward: 25, goalDamage: 1, isBoss: false },
+    Golem: { baseHealth: 1200, speed: 20, armor: 12, reward: 100, goalDamage: 5, isBoss: true },
   };
 
   for (const [type, config] of Object.entries(expectedBase)) {

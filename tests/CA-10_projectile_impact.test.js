@@ -154,6 +154,6 @@ test('CA-10 el motor elimina el proyectil tras impactar y aplica el daño a la t
   engine.tick(0.1);
 
   assert.equal(engine.projectiles.length, 0);
-  assert.equal(enemy.currentHealth, 13); // 25 - 12 de la Ballesta
+  assert.equal(enemy.currentHealth, 7); // 25 - 18 de la Ballesta
   assert.ok(tower.cooldownTimer > 0);
 });

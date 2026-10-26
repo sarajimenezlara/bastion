@@ -1,17 +1,17 @@
-// CA-01: GameEngine se instancia con 20 vidas, 150 de oro, oleada 0 y colecciones vacías.
+// CA-01: GameEngine se instancia con 20 vidas, 220 de oro, oleada 0 y colecciones vacías.
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
 const GameEngine = require('../src/core/GameEngine.js');
-const Map = require('../src/core/Map.js');
+const GameMap = require('../src/core/GameMap.js');
 
-test('CA-01 GameEngine arranca con 20 vidas y 150 de oro', () => {
+test('CA-01 GameEngine arranca con 20 vidas y 220 de oro', () => {
   const engine = new GameEngine();
 
   assert.equal(engine.lives, 20);
-  assert.equal(engine.gold, 150);
-  assert.equal(engine.totalGoldEarned, 150);
+  assert.equal(engine.gold, 220);
+  assert.equal(engine.totalGoldEarned, 220);
   assert.equal(engine.score, 0);
 });
 
@@ -42,7 +42,7 @@ test('CA-01 GameEngine arranca con colecciones vacías y estado MENU', () => {
 test('CA-01 GameEngine crea un mapa 20x12 con casillas de 40 px', () => {
   const engine = new GameEngine();
 
-  assert.ok(engine.map instanceof Map);
+  assert.ok(engine.map instanceof GameMap);
   assert.equal(engine.map.cols, 20);
   assert.equal(engine.map.rows, 12);
   assert.equal(engine.map.tileSize, 40);

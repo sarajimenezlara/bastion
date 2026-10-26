@@ -12,17 +12,17 @@ const TABLE_1 = {
   Ballesta: {
     baseCost: 50,
     levels: [
-      { level: 1, range: 120, damage: 12, fireRate: 1.5, projectileSpeed: 400 },
-      { level: 2, range: 135, damage: 22, fireRate: 1.8, projectileSpeed: 450 },
-      { level: 3, range: 150, damage: 38, fireRate: 2.2, projectileSpeed: 500 },
+      { level: 1, range: 120, damage: 18, fireRate: 1.5, projectileSpeed: 400 },
+      { level: 2, range: 135, damage: 32, fireRate: 1.8, projectileSpeed: 450 },
+      { level: 3, range: 150, damage: 52, fireRate: 2.2, projectileSpeed: 500 },
     ],
   },
   Canon: {
     baseCost: 100,
     levels: [
-      { level: 1, range: 100, damage: 30, fireRate: 0.5, projectileSpeed: 250 },
-      { level: 2, range: 115, damage: 60, fireRate: 0.6, projectileSpeed: 280 },
-      { level: 3, range: 130, damage: 105, fireRate: 0.7, projectileSpeed: 320 },
+      { level: 1, range: 100, damage: 45, fireRate: 0.5, projectileSpeed: 250 },
+      { level: 2, range: 115, damage: 85, fireRate: 0.6, projectileSpeed: 280 },
+      { level: 3, range: 130, damage: 140, fireRate: 0.7, projectileSpeed: 320 },
     ],
   },
   Escarcha: {
@@ -47,14 +47,14 @@ test('CA-07 mejorar una Ballesta descuenta 100 de oro e incrementa sus estadíst
   const engine = new GameEngine();
   const tower = engine.placeTower('Ballesta', 3, 3);
 
-  assert.equal(engine.gold, 100);
+  assert.equal(engine.gold, 170);
 
   const paid = engine.upgradeTower(tower.id);
 
   assert.equal(paid, 100); // CosteBase 50 × nivel destino 2
-  assert.equal(engine.gold, 0); // 150 - 50 (compra) - 100 (mejora)
+  assert.equal(engine.gold, 70); // 220 - 50 (compra) - 100 (mejora)
   assert.equal(tower.level, 2);
-  assert.equal(tower.damage, 22);
+  assert.equal(tower.damage, 32);
   assert.equal(tower.range, 135);
   assert.equal(tower.fireRate, 1.8);
   assert.equal(tower.projectileSpeed, 450);
@@ -106,7 +106,7 @@ test('CA-07 sin oro suficiente la mejora devuelve false y no altera la torre', (
   assert.equal(engine.upgradeTower(tower.id), false);
   assert.equal(engine.gold, 50);
   assert.equal(tower.level, 1);
-  assert.equal(tower.damage, 12);
+  assert.equal(tower.damage, 18);
   assert.equal(tower.range, 120);
   assert.equal(tower.totalInvested, 50);
 });
@@ -131,6 +131,6 @@ test('CA-07 mejorar una torre inexistente devuelve false', () => {
   const engine = new GameEngine();
 
   assert.equal(engine.upgradeTower(9999), false);
-  assert.equal(engine.gold, 150);
+  assert.equal(engine.gold, 220);
   assert.equal(engine.towers.length, 0);
 });

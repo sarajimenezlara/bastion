@@ -23,8 +23,8 @@ function spawnNormal(engine, overrides = {}) {
     type: 'Guerrero',
     health: 120,
     speed: 50,
-    armor: 5,
-    reward: 8,
+    armor: 3,
+    reward: 10,
     goalDamage: 1,
     isBoss: false,
     ...overrides,
@@ -42,8 +42,8 @@ test('CA-12 un enemigo normal que cruza la meta resta 1 vida', () => {
   assert.equal(engine.lives, 19);
   assert.equal(engine.enemies.length, 0, 'el enemigo que llega a la meta se retira');
   // Llegar a la meta no entrega recompensa de oro.
-  assert.equal(engine.gold, 150);
-  assert.equal(engine.totalGoldEarned, 150);
+  assert.equal(engine.gold, 220);
+  assert.equal(engine.totalGoldEarned, 220);
 });
 
 test('CA-12 el jefe Gólem de Bastión resta 5 vidas', () => {
@@ -52,7 +52,7 @@ test('CA-12 el jefe Gólem de Bastión resta 5 vidas', () => {
     type: 'Golem',
     health: 1888,
     speed: 20,
-    armor: 25,
+    armor: 12,
     reward: 100,
     goalDamage: 5,
     isBoss: true,
@@ -76,7 +76,7 @@ test('CA-12 varios enemigos que cruzan la meta en el mismo tick restan sus vidas
     type: 'Golem',
     health: 1200,
     speed: 20,
-    armor: 25,
+    armor: 12,
     reward: 100,
     goalDamage: 5,
     isBoss: true,
@@ -102,7 +102,7 @@ test('CA-12 las vidas nunca bajan de 0 y la derrota es inmediata', () => {
     type: 'Golem',
     health: 1200,
     speed: 20,
-    armor: 25,
+    armor: 12,
     reward: 100,
     goalDamage: 5,
     isBoss: true,
@@ -126,12 +126,12 @@ test('CA-12 un enemigo sin daño explícito usa el valor de la Tabla 2 según su
 
 test('CA-12 un enemigo que cruza la meta no se cuenta como derrotado ni da oro', () => {
   const engine = new GameEngine();
-  const enemy = spawnNormal(engine, { reward: 8 });
+  const enemy = spawnNormal(engine, { reward: 10 });
 
   placeBeforeGoal(engine, enemy);
   engine.tick(0.1);
 
-  assert.equal(engine.gold, 150);
-  assert.equal(engine.totalGoldEarned, 150);
+  assert.equal(engine.gold, 220);
+  assert.equal(engine.totalGoldEarned, 220);
   assert.equal(engine.enemies.includes(enemy), false);
 });

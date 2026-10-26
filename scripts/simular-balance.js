@@ -48,8 +48,17 @@ function play({ torres, mejorar = false }) {
     };
 }
 
-console.log('Estrategia'.padEnd(22), 'Resultado'.padEnd(9), 'Oleada', 'Vidas', 'Torres', 'Puntuación');
-for (const [nombre, estrategia] of Object.entries(ESTRATEGIAS)) {
-    const r = play(estrategia);
-    console.log(nombre.padEnd(22), r.estado.padEnd(9), String(r.oleada).padStart(4) + '/10', String(r.vidas).padStart(5), String(r.torres).padStart(6), String(r.puntuacion).padStart(10));
+function main() {
+    console.log('Estrategia'.padEnd(22), 'Resultado'.padEnd(9), 'Oleada', 'Vidas', 'Torres', 'Puntuación');
+    for (const [nombre, estrategia] of Object.entries(ESTRATEGIAS)) {
+        const r = play(estrategia);
+        console.log(nombre.padEnd(22), r.estado.padEnd(9), String(r.oleada).padStart(4) + '/10', String(r.vidas).padStart(5), String(r.torres).padStart(6), String(r.puntuacion).padStart(10));
+    }
+}
+
+// La lógica se exporta para que CA-18 la reutilice sin duplicarla.
+module.exports = { play, ESTRATEGIAS, CENTRO, DT, LIMITE_TICKS };
+
+if (require.main === module) {
+    main();
 }

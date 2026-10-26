@@ -4,7 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 
 const Enemy = require('../src/core/Enemy.js');
-const Map = require('../src/core/Map.js');
+const GameMap = require('../src/core/GameMap.js');
 
 const PATH = [
   { x: 100, y: 100 },
@@ -67,8 +67,8 @@ test('CA-03 al superar el último waypoint marca hasReachedEnd', () => {
   assert.equal(enemy.hasReachedEnd, true);
 });
 
-test('CA-03 navega los waypoints en píxeles generados por Map', () => {
-  const map = new Map();
+test('CA-03 navega los waypoints en píxeles generados por GameMap', () => {
+  const map = new GameMap();
   const waypoints = map.getWaypointsInPixels();
   const first = waypoints[0];
 

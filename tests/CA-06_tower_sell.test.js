@@ -14,7 +14,7 @@ test('CA-06 vender una Ballesta devuelve 35 de oro y libera la casilla', () => {
   const refund = engine.sellTower(tower.id);
 
   assert.equal(refund, 35); // floor(50 * 0.70)
-  assert.equal(engine.gold, 135); // 100 tras comprar + 35
+  assert.equal(engine.gold, 205); // 170 tras comprar + 35
   assert.equal(engine.towers.length, 0);
   assert.equal(engine.map.isCellBuildable(3, 3), true);
   assert.equal(engine.map.isCellOccupied(3, 3), false);
@@ -34,7 +34,7 @@ test('CA-06 la reventa aplica Math.floor sobre la inversión total', () => {
 
     assert.equal(tower.totalInvested, base);
     assert.equal(engine.sellTower(tower.id), refund);
-    assert.equal(engine.gold, 150 - base + refund);
+    assert.equal(engine.gold, 220 - base + refund);
   }
 });
 
@@ -59,14 +59,14 @@ test('CA-06 el motor devuelve el 70% de la inversión acumulada de la torre', ()
   const refund = engine.sellTower(tower.id);
 
   assert.equal(refund, 210);
-  assert.equal(engine.gold, 100 + 210);
+  assert.equal(engine.gold, 170 + 210);
 });
 
 test('CA-06 vender una torre inexistente devuelve false y no altera el oro', () => {
   const engine = new GameEngine();
 
   assert.equal(engine.sellTower(12345), false);
-  assert.equal(engine.gold, 150);
+  assert.equal(engine.gold, 220);
   assert.equal(engine.towers.length, 0);
 });
 
@@ -76,7 +76,7 @@ test('CA-06 no se puede vender dos veces la misma torre', () => {
 
   assert.equal(engine.sellTower(tower.id), 56);
   assert.equal(engine.sellTower(tower.id), false);
-  assert.equal(engine.gold, 150 - 80 + 56);
+  assert.equal(engine.gold, 220 - 80 + 56);
   assert.equal(engine.towers.length, 0);
 });
 
@@ -89,6 +89,6 @@ test('CA-06 tras vender se puede volver a construir en la misma casilla', () => 
 
   assert.ok(rebuilt);
   assert.equal(engine.towers.length, 1);
-  assert.equal(engine.gold, 135 - 100);
+  assert.equal(engine.gold, 205 - 100);
   assert.equal(engine.map.isCellOccupied(12, 7), true);
 });
