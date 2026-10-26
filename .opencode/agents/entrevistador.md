@@ -1,7 +1,7 @@
 ---
 description: Agente entrevistador para clarificar ambigüedades del GDD antes de la implementación de cada fase.
 mode: primary
-model: google/gemini-3.5-flash
+model: google/gemini-3.1-flash-lite
 permission:
   edit:
     "*": deny

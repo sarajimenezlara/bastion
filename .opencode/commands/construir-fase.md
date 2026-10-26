@@ -1,6 +1,7 @@
 ---
 description: Implementa una fase del GDD con sus pruebas y no para hasta que npm test esté en verde (agente build)
 agent: build
+model: opencode/deepseek-v4.1-flash-free
 ---
 Implementa la **Fase $1** de Bastión siguiendo el plan de esta sesión, `docs/decisiones/fase-$1.md` (si existe), `docs/GDD.md` y `AGENTS.md`.
 
