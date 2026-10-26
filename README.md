@@ -3,6 +3,12 @@
 Juego de defensa de torres que se ejecuta abriendo `index.html` con doble clic (protocolo `file://`),
 sin servidores, sin bundlers y sin librerías externas.
 
+> **Trabajo de la optativa de Desarrollo de agentes de IA (2º DAW).** El juego se ha diseñado con
+> gemas de Gemini (creadas con una metagema) y se ha construido y validado fase a fase con OpenCode,
+> usando modelos de Gemini, OpenRouter y uno local en Ollama elegido con llmfit.
+> Todo el proceso, las relaciones entre herramientas y los fallos encontrados están en
+> **[`docs/PROCESO.md`](docs/PROCESO.md)**.
+
 ## Requisitos
 
 - Node.js 18 o superior (solo para ejecutar las pruebas automáticas).
