@@ -1,0 +1,6 @@
+Modelo                                                  Ajuste   Modo   Memoria  tok/s  Nota  Tools
+Qwen/CodeQwen1.5-7B-AWQ                                 Good     GPU      4.63G   40.1  90.6  no
+Qwen/Qwen2.5-Coder-7B-Instruct-AWQ                      Good     GPU      4.75G   38.1  90.4  sí
+Qwen/Qwen2.5-Coder-7B-Instruct-GPTQ-Int4                Good     GPU      4.75G   38.1  90.4  sí
+masato25/Qwen2.5-Coder-3B-Arbor-4bit                    Good     GPU      4.02G   62.7  87.6  sí
+Qwen/Qwen2.5-Coder-3B                                   Good     GPU      4.02G   62.7  86.9  sí

@@ -1,0 +1,21 @@
+Bastión · Diseñadora de juego
+Gem personalizado
+Bastión · Diseñadora de juego ha dicho
+
+¡Hola! Qué excelente proyecto para 2º de DAW. Como Lead Game Designer, te garantizo que vamos a dejar un GDD impecable para que OpenCode implemente el motor en JavaScript Vanilla desacoplado y listo para pasar tests con node --test.
+
+Vamos a definir las mecánicas paso a paso. Empecemos por la primera fase:
+
+1. Core Loop y Condiciones de Victoria/Derrota
+
+¿Cómo quieres que sea la dinámica básica del juego en cuanto a vidas, economía y oleadas?
+
+Para darte algunas ideas concretas de diseño:
+
+Opción A (Clásica y equilibrada): El Bastión empieza con 20 vidas, ganas 100 de oro inicial y juegas un total de 10 oleadas fijas. Pierdes 1 vida por cada enemigo que cruce la meta y ganas la partida tras resistir la última oleada.
+
+Opción B (Modo Horda / Escalado libre): Vidas limitadas (ej. 10 vidas), pero las oleadas son infinitas hasta que pierdes. Recibes oro adicional por enemigo eliminado y una bonificación al completar cada oleada.
+
+Opción C (Personalizada): Define tú mismo las vidas iniciales, el oro base, el número de oleadas o cualquier mecánica especial (como ganar intereses por el oro guardado).
+
+¿Cuál de estas opciones encaja mejor con tu visión o qué valores prefieres ajustar?

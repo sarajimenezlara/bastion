@@ -1,0 +1,37 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "model": "google/gemini-3.5-flash",
+    "small_model": "ollama/qwen2.5-coder-16k",
+    "provider": {
+        "google": {
+            "options": {
+                "apiKey": "{env:GEMINI_API_KEY}"
+            }
+        },
+        "openrouter": {
+            "options": {
+                "apiKey": "{env:OPENROUTER_API_KEY}"
+            },
+            "models": {
+                "openrouter/free": {
+                    "name": "OpenRouter Auto Free Router"
+                }
+            }
+        },
+        "ollama": {
+            "npm": "@ai-sdk/openai-compatible",
+            "name": "Ollama (local)",
+            "options": {
+                "baseURL": "http://localhost:11434/v1"
+            },
+            "models": {
+                "qwen2.5-coder-16k": {
+                    "name": "Qwen2.5-Coder 7B, contexto 16k (elegido con llmfit)"
+                }
+            }
+        }
+    },
+    "permission": {
+        "external_directory": "deny"
+    }
+}

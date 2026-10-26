@@ -1,0 +1,77 @@
+Bastión · Diseñadora de juego
+Gem personalizado
+Bastión · Diseñadora de juego ha dicho
+
+Tomada nota de las mecánicas para Enemigos y Oleadas:
+
+Catálogo de 5 Enemigos:
+
+Duende (Rápido): Vida baja, velocidad alta, sin armadura, recompensa baja.
+
+Soldado (Guerrero): Vida media, velocidad media, armadura media, recompensa estándar.
+
+Ogros (Tanque): Vida alta, velocidad lenta, armadura alta, recompensa elevada.
+
+Enjambre: Vida muy baja, velocidad media, sin armadura, aparecen en oleadas/grupos muy seguidos (ideal para el daño en área del Cañón).
+
+Gólem de Bastión (Jefe): Sale en las oleadas 5 y 10. Vida muy alta, velocidad muy lenta, armadura alta, resta 5 vidas si cruza la meta.
+
+Mecánica de Armadura: El daño físico final es Math.max(1, dañoFísico - armadura). El daño mágico ignora la armadura por completo.
+
+Escalado y Generación:
+
+Tabla fija por oleada para definir el número de unidades, intervalo de aparición (spawn rate) y tipo de enemigo.
+
+Multiplicador acumulativo de vida: Vida = VidaBase * (1.12 ^ (NivelOleada - 1)).
+
+Pasemos al cuarto bloque de la entrevista:
+
+4. Tablero y Mapa
+
+¿Cómo quieres que sea la estructura del mapa, el camino de los enemigos y las zonas donde el jugador puede construir?
+
+Para ayudarte a definir la cuadrícula:
+
+Opción A (Camino fijo por Waypoints / Nodos): Mapa en rejilla (ej. 16x10 casillas). Hay un camino predefinido marcado por una serie de coordenadas/waypoint por el que caminan los enemigos. El jugador puede construir torres en cualquier casilla vacía que no sea parte del camino.
+
+Opción B (Múltiples caminos / Bifurcación): Dos puntos de entrada que se unen o dos caminos independientes hacia el Bastión.
+
+Opción C (Laberinto / PathMe parece una excelente adición de diseño. El tipo Enjambre crea una sinergia perfecta y le da un propósito clarísimo a la torre de Cañón (daño AoE).
+
+Anotado para la especificación del catálogo y escalado:
+
+Tipos de enemigos:
+
+Enjambre: Vida muy baja, velocidad media, sin armadura, recompensa baja. Se engendran en grupos densos (intervalo de aparición muy corto).
+
+Duende / Rápido: Vida baja, velocidad alta, sin armadura, recompensa baja.
+
+Guerrero / Estándar: Vida media, velocidad media, armadura media, recompensa estándar.
+
+Tanque: Vida alta, velocidad lenta, armadura alta, recompensa elevada.
+
+Jefe: Vida muy alta, velocidad muy lenta, armadura alta, resta 5 vidas si cruza la meta. Exclusivo de las oleadas 5 y 10.
+
+Mecánica de Armadura: Daño Físico Recibido = Math.max(1, Daño - Armadura). El Daño Mágico ignora la armadura por completo.
+
+Estructura y Escalado de Oleadas:
+
+Tabla fija de configuración (JSON/objeto JS) para definir los spawns de las 10 oleadas (tipos, número de unidades e intervalo entre apariciones).
+
+Escalado de vida global: Multiplicador de vida = 1.12 ^ (número_de_oleada - 1) aplicado sobre la vida base del enemigo.
+
+Pasemos a la cuarta fase de la entrevista:
+
+4. Tablero y Mapa
+
+¿Cómo quieres que sea la estructura del mapa, la cuadrícula (grid) y el camino que siguen los enemigos?
+
+Para darte algunas opciones técnicas orientadas al desarrollo con Canvas Vanilla:
+
+Opción A (Ruta fija por Waypoints): Un mapa de rejilla (ej. 16x10 casillas). El camino es una ruta fija definida por puntos de referencia (Waypoints) que cruzan la pantalla. Las casillas del camino no son edificables; las casillas vacías adyacentes sí lo son.
+
+Opción B (Ruta de entrada a salida única sobre rejilla libre): Los enemigos entran por una casilla (Start) y buscan la salida (End) usando un algoritmo de caminos (Pathfinding tipo A*). Las torres colocadas actúan como obstáculos que alteran la ruta del enemigo.
+
+Opción C (Múltiples rutas fijas): Varias rutas predefinidas (ej. 2 caminos) que se alternan o usan simultáneamente en oleadas avanzadas.
+
+¿Qué opción prefieres para el mapa y de qué tamaño aproximado te gustaría la rejilla de casillas?

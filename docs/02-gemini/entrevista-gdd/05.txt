@@ -1,0 +1,108 @@
+Bastión · Diseñadora de juego
+Gem personalizado
+Bastión · Diseñadora de juego ha dicho
+
+Excelente. Con estas especificaciones cerramos por completo la Fase 1 (Entrevista).
+
+A continuación, presento el Resumen Consolidado con todas las decisiones mecánicas, técnicas y de interfaz acordadas antes de pasar a redactar el Game Design Document (GDD) oficial.
+
+RESUMEN PRE-GDD: «BASTIÓN»
+1. Core Loop y Economía
+
+Vidas del Bastión: 20 iniciales.
+
+Oro inicial: 150 de oro.
+
+Oleadas: 10 oleadas fijas con inicio manual vía botón "Siguiente oleada".
+
+Bonus por llamada anticipada: Bonificación de oro proporcional al tiempo/enemigos restantes si se pulsa antes de concluir la oleada actual.
+
+Penalización por brecha:
+
+Enemigo normal / Enjambre / Duende / Guerrero / Tanque: -1 vida.
+
+Jefe (Gólem de Bastión): -5 vidas.
+
+Victoria: Sobrevivir a las 10 oleadas.
+
+Derrota: Perder todas las vidas (0 vidas restantes).
+
+Puntuación: Oro total ganado + (Vidas restantes × 50). El récord se persiste localmente en localStorage.
+
+2. Torres y Estructuras
+
+Catálogo (4 torres):
+
+Ballesta (50 oro): Daño físico, cadencia alta, mono-objetivo.
+
+Cañón (100 oro): Daño físico, área de efecto (AoE), cadencia lenta.
+
+Escarcha (80 oro): Daño mágico (ignora armadura), ralentización del 40 % durante 2.0 s (no acumulable).
+
+Arcana (150 oro): Daño mágico (ignora armadura), alto daño mono-objetivo.
+
+Targeting: Ataca al enemigo más avanzado en la ruta que esté dentro de su rango.
+
+Sistema de Upgrades: Nivel máximo 3. Coste de mejora = Coste Base * Nivel Destino.
+
+Reventa: Devuelve el 70 % de la inversión total (coste base + coste de mejoras acumuladas).
+
+3. Enemigos y Oleadas
+
+Catálogo (5 enemigos):
+
+Enjambre: Vida muy baja, velocidad media, 0 armadura, sale en grupos densos.
+
+Duende (Rápido): Vida baja, velocidad alta, 0 armadura.
+
+Guerrero (Estándar): Vida media, velocidad media, armadura media.
+
+Tanque: Vida alta, velocidad lenta, armadura alta.
+
+Gólem de Bastión (Jefe): Vida muy alta, velocidad muy lenta, armadura alta. Exclusivo de oleadas 5 y 10.
+
+Mecánica de Armadura:
+
+Daño Físico Recibido = Math.max(1, Daño - Armadura).
+
+Daño Mágico = Ignora la armadura por completo.
+
+Escalado: Tabla fija de spawns por oleada + multiplicador de vida 1.12 ^ (NivelOleada - 1).
+
+4. Tablero y Mapa
+
+Canvas: 800 × 480 px.
+
+Grid: 20 columnas × 12 filas (casillas de 40 × 40 px).
+
+Camino: Lista de waypoints en coordenadas de casilla conectados por tramos rectos (horizontales/verticales) formando una serpiente de varias vueltas.
+
+Zonas: Casillas del camino no edificables. Casillas libres permiten 1 torre por casilla.
+
+5. Interfaz, Pantallas y Atajos
+
+Distribución de UI: Canvas arriba (800x480), panel de selección y gestión de torres situado debajo.
+
+Pantallas superpuestas (Overlays):
+
+Inicio: Título + Botón "Jugar".
+
+Victoria: Puntuación final, récord personal (localStorage) + Botón "Volver a jugar".
+
+Derrota: Puntuación alcanzada + Botón "Volver a jugar".
+
+Atajos de teclado:
+
+1 - 4: Seleccionar torre (Ballesta, Cañón, Escarcha, Arcana).
+
+Espacio: Pausar / Reanudar partida.
+
+F: Alternar velocidad (1x / 2x).
+
+Escape: Cancelar selección actual de torre.
+
+U: Subir de nivel (Upgrade) torre seleccionada.
+
+V: Vender (Sell) torre seleccionada.
+
+¿Estás de acuerdo con este resumen o quieres ajustar algún parámetro antes de generar el GDD para OpenCode?

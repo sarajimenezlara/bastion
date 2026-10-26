@@ -1,0 +1,59 @@
+
+=== google/gemma-4-26B-A4B-it ===
+
+Provider: Google
+Parameters: 26.5B
+Quantization: Q4_K_M
+Best Quant: Q4_K_M
+Context Length: 262144 tokens
+Use Case: Multimodal, vision and text
+Category: Multimodal
+Released: 2026-03-31
+License: apache-2.0
+Runtime: llama.cpp (baseline est. ~22.3 tok/s)
+
+Score Breakdown:
+  Overall Score: 77.4 / 100
+  Quality: 72  Speed: 56  Fit: 100  Context: 100
+  Baseline Est. Speed: 22.3 tok/s
+
+Estimate Basis:
+  Confidence: estimated
+  Method: per-backend heuristic constant — GPU not in the bandwidth table,
+          so expect a wide error band. Please report your GPU model so we
+          can add real bandwidth data (github.com/AlexsJones/llmfit/issues).
+  Models single-request generation at ctx <= 8192 tokens.
+  Prompt processing (prefill/TTFT) is not estimated for this model/hardware.
+  Baseline error band is roughly +/-30%.
+  Verify on this machine:
+    llmfit bench "google/gemma-4-26B-A4B-it"    (against a running provider)
+
+Resource Requirements:
+  Min VRAM: 13.6 GB
+  Min RAM: 14.8 GB (CPU inference)
+  Recommended RAM: 24.7 GB
+  Disk (est): 15.4 GB (at Q4_K_M)
+  Disk/quant: Q8_0: 27.9G  Q6_K: 21.2G  Q5_K_M: 18.1G  Q4_K_M: 15.4G  Q3_K_M: 12.7G  Q2_K: 9.8G
+
+MoE Architecture:
+  Experts: 8 active / 128 total per token
+  Active VRAM: 2.4 GB (vs 13.6 GB full model)
+  Offloaded: 12.2 GB inactive experts in RAM
+
+Fit Analysis:
+  Status: 🟡 Good
+  Run Mode: MoE
+  Memory Utilization: 25.3% (1.5 / 6.0 GB)
+
+GGUF Downloads:
+  unsloth → https://huggingface.co/unsloth/gemma-4-26B-A4B-it-GGUF
+  ggml-org → https://huggingface.co/ggml-org/gemma-4-26B-A4B-it-GGUF
+  mradermacher → https://huggingface.co/mradermacher/gemma-4-26B-A4B-it-GGUF
+  Tip: llmfit download unsloth/gemma-4-26B-A4B-it-GGUF --quant Q4_K_M
+
+Notes:
+  Context capped at 8192 tokens for estimation (model supports up to 262144; use --max-context to override)
+  MoE: 8/128 experts active in VRAM (1.5 GB) at Q2_K
+  Inactive experts offloaded to system RAM (7.8 GB)
+  Baseline estimated speed: 22.3 tok/s
+

@@ -1,0 +1,39 @@
+Bastión · Diseñadora de juego
+Gem personalizado
+Bastión · Diseñadora de juego ha dicho
+
+Excelente. Tomo nota de los ajustes de la Opción A:
+
+Vidas iniciales: 20.
+
+Oro inicial: 150.
+
+Oleadas: 10 oleadas fijas (activación manual mediante botón "Siguiente oleada" con bonus por llamada anticipada).
+
+Penalización por brecha: 1 vida (enemigos normales), 5 vidas (jefes).
+
+Economía: Oro por enemigo eliminado + bonus fijo por completar oleada.
+
+Pasemos al segundo bloque de la entrevista:
+
+2. Torres y Estructuras
+
+¿Qué catálogo de torres quieres incluir en «Bastión», cuáles serán sus roles, costes y cómo funcionarán sus mejoras?
+
+Para ayudarte a decidir, te propongo este conjunto base equilibrado:
+
+1. Torre Básica / Arqueros: Coste bajo (ej. 50 oro), ataque rápido a un solo objetivo, daño físico básico.
+
+2. Torre Pesada / Cañón: Coste medio (ej. 100 oro), ataque lento pero con daño en área (AoE).
+
+3. Torre Frenadora / Hielo: Coste medio (ej. 80 oro), daño bajo pero ralentiza la velocidad de movimiento de los enemigos en un área o rango.
+
+4. Torre Perforante / Mágica: Coste alto (ej. 150 oro), ignora o reduce la armadura del enemigo.
+
+Respecto a las mejoras (Upgrades):
+
+Opción A (Lineal simple): Cada torre se puede subir hasta Nivel 3 pagando oro adicional (aumenta rango, daño y cadencia). Se pueden vender por un % del coste total invertido.
+
+Opción B (Especialización a Nivel 3): Al llegar a Nivel 3, eliges entre 2 ramas (ej. Cañón -> Gran mortero de largo alcance O Bomba incendiaria de daño en el tiempo).
+
+¿Te parece bien este catálogo de 4 torres y el sistema de mejoras lineal (Opción A), o quieres ajustar costes, añadir/quitar torres o usar la Opción B?

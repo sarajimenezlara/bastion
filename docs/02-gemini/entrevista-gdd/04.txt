@@ -1,0 +1,47 @@
+Bastión · Diseñadora de juego
+Gem personalizado
+Bastión · Diseñadora de juego ha dicho
+
+Anotado perfectamente. La especificación técnica del Tablero y Mapa queda así:
+
+Dimensiones del Canvas: 800 × 480 píxeles.
+
+Cuadrícula (Grid): 20 columnas × 12 filas (casillas cuadradas de 40 × 40 px).
+
+Camino y Ruta:
+
+Ruta fija de entrada a salida única mediante una lista de waypoints (coordenadas de casilla).
+
+Tramos rectos (horizontales y verticales) conectando los waypoints para formar un recorrido serpenteante que cruza la pantalla varias veces.
+
+Criterio de construcción: Las casillas ocupadas por el camino son no edificables. Se permite construir exactamente una torre por casilla libre en el resto de la rejilla (permitiendo que las torres en zonas centrales tengan cobertura sobre múltiples tramos del recorrido).
+
+Pasemos al quinto y último bloque de la entrevista:
+
+5. Interfaz de Usuario (UI/UX) e Interacciones
+
+¿Cómo quieres estructurar los controles, la interfaz y los modos de juego durante la partida?
+
+Para definir los detalles de UI/UX te propongo la siguiente base:
+
+HUD Superpuesto / Panel:
+
+Contadores: Muestra Vidas restantes, Oro disponible, Oleada actual (ej. 3/10) y Enemigos restantes en la oleada activa.
+
+Selector de Torres: Panel lateral/inferior para elegir qué torre construir (mostrando icono, nombre y coste de Ballesta, Cañón, Escarcha y Arcana).
+
+Interacciones con el Ratón:
+
+Hover: Previsualización de la torre sobre la casilla y círculo de alcance (rango) antes de colocarla.
+
+Click en casilla vacía: Construye la torre seleccionada si hay suficiente oro.
+
+Click en torre existente: Abre menú contextual o panel para ver sus estadísticas, subir de nivel (Upgrade) o venderla (Sell) por el 70% invertido.
+
+Controles de Control de Tiempo:
+
+Botón "Siguiente oleada" (con el bonus por llamada anticipada si la oleada actual no ha terminado).
+
+Botón Pausa / Reanudar y botón de Acelerar velocidad (1x / 2x).
+
+¿Te parece adecuada esta distribución de la interfaz y controles, o quieres añadir alguna atajo de teclado (ej. teclas 1-4 para seleccionar torres, Espacio para pausar) o cambiar la ubicación del panel?

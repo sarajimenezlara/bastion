@@ -1,0 +1,111 @@
+Bastión · Revisora QA
+Gem personalizado
+Bastión · Revisora QA ha dicho
+1. Resumen de Evaluación
+
+Fase evaluada: Fase de Diseño (Validación del GDD como entregable previo a implementación)
+
+Estado general: NO APTO
+
+2. Tabla de Criterios de Aceptación
+Criterio	Estado	Evidencia / Justificación
+(a) Ejecución sin servidor (index.html con doble clic)	CUMPLE	La Sección 1 establece que el Core no depende del DOM/Canvas y usa ESM nativos. Al abrir un index.html básico cargando módulos nativos locales (o bundled si fuera el caso), cumple la premisa. No requiere librerías ni servidor backend.
+(b) Criterios de Aceptación comprobables (CA-01 a CA-15)	NO CUMPLE	
+
+Ambigüedades críticas en CA-07 y CA-09:
+
+
+
+
+1. CA-07: Expresa que el coste de mejora sigue la fórmula 
+CosteBase×NivelDestino. Sin embargo, la Tabla 1 del GDD especifica montos fijos explicitados en columna (ej. Cañón N2 cuesta 200, pero su coste base es 200, por lo que 
+200×2=400
+
+=200). Hay una contradicción directa entre la fórmula redactada en el CA y la tabla explicativa.
+
+
+
+
+2. CA-09: Indica que la salud escala como 
+VidaBase×(1.12
+(N−1)
+). Sin embargo, en la Tabla 3 no se especifica si 
+N se refiere al índice base 0 o base 1 del WaveManager ni cómo interactúa con el modificador base healthMultiplierBase = 1.12.
+
+
+(c) Suficiencia de datos de balance	NO CUMPLE	
+
+Faltan datos esenciales de configuración e implementación:
+
+
+
+
+1. Costes base de compra: La Tabla 1 especifica coste de mejora a Nivel 2 y 3, pero no incluye el coste base de compra (Nivel 1) para Ballesta, Cañón, Escarcha y Arcana.
+
+
+
+
+2. Velocidad y colisiones de Proyectiles: No se define la velocidad (speed) de los proyectiles de cada torre ni si el daño AoE del Cañón aplica caída de daño o daño plano en el radio.
+
+
+
+
+3. Ancho de la ruta / Tolerancia de waypoint: Faltan las dimensiones en píxeles del camino para la lógica de colisión/detección de final de ruta (distanceTraveled y límites).
+
+3. Análisis de Riesgos y Calidad
+
+Rendimiento y Loop de Juego:
+
+La arquitectura del Core desacoplado es adecuada para pruebas unitarias. Sin embargo, no se especifica en la Sección 2 la gestión de ciclos de vida de arrays (projectiles, enemies). Modificar o hacer splice sobre arrays que están siendo iterados durante el tick(deltaTime) provocará colapsos o saltos de evaluación en el motor.
+
+Lógica y Arquitectura:
+
+Inconsistencia en el cálculo de mejora de torres: Si OpenCode implementa el CA-07 siguiendo la fórmula textual (
+CosteBase
+×
+NivelDestino
+CosteBase×NivelDestino), la torre Arcana N3 costaría 
+𝑁
+×
+Base
+N×Base (si la base fuera p.ej. 200, sería 600), mientras que la Tabla 1 especifica 450. Esto rompería las pruebas unitarias deterministas.
+
+Inconsistencia en el Bono de Oleada Anticipada: En la Sección 3.4 se indica la fórmula 
+Math.floor
+(
+EnemigosPendientesEnCola
+×
+2
+)
++
+15
+Math.floor(EnemigosPendientesEnCola×2)+15, pero la interfaz WaveManager de la Sección 2 no expone ni aclara cómo se contabilizan los enemigos en cola vs. enemigos activos en mapa.
+
+Mantenibilidad:
+
+Map.pathCells se propone como un Set() con claves de cadena "col,row". Aunque funcional, en entornos de alto volumen de llamadas dentro de un tick de juego, la instanciación de strings genera presión innecesaria sobre el recolector de basura (Garbage Collector).
+
+4. Veredicto Final y Pasos a Seguir
+
+VEREDICTO: NO APTO
+
+Markdown
+### 🤖 PROMPT DE CORRECCIÓN PARA OPENCODE
+
+Se ha revisado la entrega del Game Design Document (GDD) y se han detectado inconsistencias y vacíos de especificación que impiden la implementación y verificación mediante tests automatizados:
+
+1. [Falta de datos en Balance de Torres (Tabla 1)]:
+   - Añadir explícitamente los costes base de compra (Nivel 1) para cada una de las 4 torres (Ballesta, Cañón, Escarcha, Arcana).
+
+2. [Contradicción en CA-07 vs Tabla 1]:
+   - Corregir el enunciado del criterio CA-07 para que concuerde exactamente con los valores de mejora tabulados en la Tabla 1 (o clarificar la regla de cálculo exacta sin contradicciones).
+
+3. [Vacío de especificación en Proyectiles y Movimiento]:
+   - Especificar la velocidad en px/s de los proyectiles para cada tipo de torre y el radio/tolerancia exacto para determinar cuando un proyectil impacta a un enemigo o cuando un enemigo alcanza un waypoint.
+
+4. [Clarificación de Escalado de Vida (CA-09)]:
+   - Especificar la fórmula exacta de redondeo (`Math.floor` / `Math.round`) para la salud de los enemigos al aplicar el factor $1.12^{(N-1)}$.
+
+Requisitos de corrección:
+- Actualizar las secciones correspondientes del GDD manteniendo la arquitectura de desacoplamiento estricto en JS Vanilla.
+- Garantizar que cada valor necesario para inicializar las clases del Core esté explícitamente parametrizado.

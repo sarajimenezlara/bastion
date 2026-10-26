@@ -1,0 +1,54 @@
+
+=== Qwen/Qwen2.5-Coder-7B-Instruct ===
+
+Provider: Alibaba
+Parameters: 7.6B
+Quantization: Q4_K_M
+Best Quant: Q4_K_M
+Context Length: 32768 tokens
+Use Case: Code generation and completion
+Category: Coding
+Released: 2024-09-23
+License: apache-2.0
+Runtime: llama.cpp (baseline est. ~36.5 tok/s)
+
+Score Breakdown:
+  Overall Score: 84.5 / 100
+  Quality: 84  Speed: 91  Fit: 63  Context: 100
+  Baseline Est. Speed: 36.5 tok/s
+
+Estimate Basis:
+  Confidence: estimated
+  Method: per-backend heuristic constant — GPU not in the bandwidth table,
+          so expect a wide error band. Please report your GPU model so we
+          can add real bandwidth data (github.com/AlexsJones/llmfit/issues).
+  Models single-request generation at ctx <= 8192 tokens.
+  Prompt processing (prefill/TTFT) is not estimated for this model/hardware.
+  Baseline error band is roughly +/-30%.
+  Verify on this machine:
+    llmfit bench "Qwen/Qwen2.5-Coder-7B-Instruct"    (against a running provider)
+    llama-bench -m <path-to-Q4_K_M-gguf> -ngl 99 -p 512 -n 128    (compare the tg128 row; get the path via `llmfit download`)
+
+Resource Requirements:
+  Min VRAM: 3.9 GB
+  Min RAM: 4.3 GB (CPU inference)
+  Recommended RAM: 7.1 GB
+  Disk (est): 4.4 GB (at Q4_K_M)
+  Disk/quant: Q8_0: 8.0G  Q6_K: 6.1G  Q5_K_M: 5.2G  Q4_K_M: 4.4G  Q3_K_M: 3.7G  Q2_K: 2.8G
+
+Fit Analysis:
+  Status: 🟠 Marginal
+  Run Mode: GPU
+  Memory Utilization: 89.3% (5.4 / 6.0 GB)
+
+GGUF Downloads:
+  unsloth → https://huggingface.co/unsloth/Qwen2.5-Coder-7B-Instruct-GGUF
+  bartowski → https://huggingface.co/bartowski/Qwen2.5-Coder-7B-Instruct-GGUF
+  mradermacher → https://huggingface.co/mradermacher/Qwen2.5-Coder-7B-Instruct-GGUF
+  Tip: llmfit download unsloth/Qwen2.5-Coder-7B-Instruct-GGUF --quant Q4_K_M
+
+Notes:
+  Context capped at 8192 tokens for estimation (model supports up to 32768; use --max-context to override)
+  GPU: model loaded into VRAM
+  Baseline estimated speed: 36.5 tok/s
+

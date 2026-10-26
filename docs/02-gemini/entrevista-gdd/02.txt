@@ -1,0 +1,39 @@
+Bastión · Diseñadora de juego
+Gem personalizado
+Bastión · Diseñadora de juego ha dicho
+
+Anotado perfectamente. El catálogo de torres queda fijado con la siguiente especificación técnica:
+
+Ballesta (50 oro): Daño físico, cadencia alta, mono-objetivo.
+
+Cañón (100 oro): Daño físico, daño en área (AoE), cadencia lenta.
+
+Escarcha (80 oro): Daño mágico (ignora armadura), ralentización del 40 % durante 2 segundos (no acumulable).
+
+Arcana (150 oro): Daño mágico (ignora armadura), alto daño mono-objetivo.
+
+Criterio de objetivo (Targeting): Prioridad al enemigo más avanzado en la ruta dentro de su rango.
+
+Sistema de mejoras (Upgrades): Hasta Nivel 3. Coste de mejora = Coste Base * Nivel Destino (ej. Subir Ballesta a Nivel 2 cuesta 50 * 2 = 100 de oro).
+
+Reventa: Devuelve el 70 % del total invertido (coste base + mejoras aplicadas).
+
+Mecánica de armadura: El daño físico se reduce según la armadura del enemigo; el daño mágico la ignora por completo.
+
+Pasemos a la tercera fase de la entrevista:
+
+3. Enemigos y Oleadas
+
+¿Qué catálogo de enemigos quieres para las 10 oleadas y cómo escalará la dificultad?
+
+Para mantener un ecosistema equilibrado y fácil de testear con node --test, te propongo esta tipología básica:
+
+Rápido / Duende: Vida baja, velocidad alta, sin armadura, recompensa baja.
+
+Soldado / Guerrero: Vida media, velocidad media, armadura media, recompensa estándar.
+
+Tanque / Ogro: Vida alta, velocidad lenta, armadura alta, recompensa elevada.
+
+Jefe / Gólem de Bastión: Aparece en oleadas clave (ej. oleada 5 y 10). Vida extremadamente alta, velocidad muy lenta, armadura alta. Resta 5 vidas al llegar a la meta.
+
+Pregunta: ¿Te parece bien esta lista de 4 tipos de enemigos? En cuanto al escalado entre oleadas, ¿prefieres que la composición de cada una de las 10 oleadas esté fijada a mano en una tabla de configuración (JSON/objeto JS) o que escala automáticamente mediante una fórmula matemática por oleada?

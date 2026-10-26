@@ -1,0 +1,8 @@
+{
+    "name": "bastion",
+    "version": "1.0.0",
+    "description": "Tower defense «Bastión»: diseñado con Gemini (gemas) y construido y validado con OpenCode.",
+    "scripts": {
+        "test": "node --test tests/"
+    }
+}

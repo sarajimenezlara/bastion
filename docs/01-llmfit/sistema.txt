@@ -1,0 +1,10 @@
+
+=== System Specifications ===
+CPU: 13th Gen Intel(R) Core(TM) i7-13620H (16 cores)
+Total RAM: 15.32 GB
+Available RAM: 9.55 GB
+RAM Bandwidth: ~65 GB/s (measured)
+Backend: CUDA
+GPU 1: NVIDIA GeForce RTX 4050 Laptop GPU (6.00 GB VRAM, 5.64 GB free, CUDA)
+GPU 2: Intel Graphics (VRAM unknown, SYCL)
+
