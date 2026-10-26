@@ -6,7 +6,7 @@
 // - El paso de cada tick se limita a la distancia restante para no atravesar al enemigo.
 // Patrón UMD simplificado: compatible con navegador (window) y node --test (CommonJS).
 
-const Vector2DRef =
+const Vector2DRefProjectile =
   typeof window !== 'undefined' && window.Vector2D
     ? window.Vector2D
     : typeof require !== 'undefined'
@@ -43,7 +43,7 @@ class Projectile {
     slowDuration = 0
   ) {
     this.id = id === undefined || id === null ? Projectile.nextId() : id;
-    this.position = new Vector2DRef(startPos.x, startPos.y);
+    this.position = new Vector2DRefProjectile(startPos.x, startPos.y);
     this.targetEnemy = targetEnemy || null;
     this.damage = damage;
     this.damageType = damageType;
@@ -56,7 +56,7 @@ class Projectile {
     // Última posición conocida del objetivo; el Cañón la usa si el enemigo muere en vuelo.
     this.lastTargetPosition =
       this.targetEnemy && this.targetEnemy.position
-        ? new Vector2DRef(this.targetEnemy.position.x, this.targetEnemy.position.y)
+        ? new Vector2DRefProjectile(this.targetEnemy.position.x, this.targetEnemy.position.y)
         : null;
   }
 
@@ -95,7 +95,7 @@ class Projectile {
     const delta = Math.max(0, Number(deltaTime) || 0);
 
     if (this.isTargetAlive()) {
-      this.lastTargetPosition = new Vector2DRef(
+      this.lastTargetPosition = new Vector2DRefProjectile(
         this.targetEnemy.position.x,
         this.targetEnemy.position.y
       );

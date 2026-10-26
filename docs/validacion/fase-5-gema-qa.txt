@@ -1,0 +1,65 @@
+Bastión · Revisora QA
+Gem personalizado
+Bastión · Revisora QA ha dicho
+1. Resumen de Evaluación
+
+Fase evaluada: Fases 5 & 6 (Renderizado, UI, Atajos y Ejecución Directa file://)
+
+Estado general: APTO
+
+2. Tabla de Criterios de Aceptación
+Criterio	Estado	Evidencia / Justificación
+CA-14	CUMPLE	
+
+Pruebas manuales e informe local: Verificado en docs/validacion/fase-5-prueba-navegador.md en Opera GX (Chromium 152) abriendo mediante protocolo file:// sin errores en consola ni bloqueos CORS.
+
+
+
+
+Tests automatizados: tests/CA-14_index_file_protocol.test.js y tests/CA-14_game_loop_delta.test.js pasan correctamente (✔ CA-14 el core se carga antes que la capa de presentación, ✔ CA-14 la hoja de estilos referenciada existe, limitación de delta a 0.1s en GameLoop.js líneas 83-85).
+
+
+CA-15	CUMPLE	
+
+Evidencia en código: Implementado en src/presentation/InputMap.js (teclas 1-4 para torres, Espacio para pausa, F para velocidad, Escape para cancelar, U/V para mejorar/vender) y gestionado sin bloqueos al escribir en campos de texto (isTypingTarget en líneas 19-24).
+
+
+
+
+Tests automatizados: tests/CA-15_hotkeys.test.js pasa los 11 tests correspondientes (✔ CA-15 las teclas 1-4 eligen las cuatro torres del catálogo, ✔ CA-15 Espacio pausa, F alterna velocidad..., manejo de clics y selección continua).
+
+
+CA-16	CUMPLE	
+
+Evidencia en código: Implementado en src/presentation/RecordStore.js. Utiliza la clave bastion.record en localStorage (línea 6), valida la estructura del objeto antes de guardar (método isValidRecord, líneas 38-43) y gestiona excepciones en entornos restrictivos/corruptos (líneas 59-62, 90-93).
+
+
+
+
+Tests automatizados: tests/CA-16_record_store.test.js pasa los 9 tests de persistencia, récord no superado, manejo de JSON corruptos y ausencia de localStorage.
+
+3. Análisis de Riesgos y Calidad
+
+Rendimiento y Loop de Juego:
+
+GameLoop.js implementa adecuadamente la restricción MAX_DELTA = 0.1 (100 ms), evitando el "efecto salto" o la acumulación masiva de colisiones en el motor si el usuario cambia de pestaña o sufre caídas drásticas de rendimiento.
+
+La sincronización entre el estado de los proyectiles (renderer.observeProjectiles y renderer.collectImpacts) antes y después del engine.tick(deltaTime) en src/presentation/main.js garantiza la recolección limpia de destellos e impactos sin dejar objetos residuales en memoria.
+
+Lógica y Arquitectura:
+
+Inyección de Dependencias: Alta desacoplabilidad en RecordStore e InputMap, lo que permite que el 100% de la lógica de interfaz y almacenamiento sea probada de manera determinista mediante node --test sin depender de una instancia real de JSDOM o un navegador activo.
+
+Manejo de Errores Robustos: RecordStore contempla capturas con try/catch para escenarios donde el protocolo file:// deshabilita localStorage por políticas de privacidad o almacenamiento lleno, evitando que la partida se detenga o lance excepciones no controladas.
+
+Mantenibilidad:
+
+El código sigue el patrón UMD simplificado para compatibilidad dual (Browser window y Node.js module.exports).
+
+No se detectaron code smells ni fugas de memoria críticas en los archivos de la capa de presentación evaluados.
+
+4. Veredicto Final y Pasos a Seguir
+
+VEREDICTO: APTO
+
+Todos los Criterios de Aceptación (CA-14, CA-15, CA-16, así como las verificaciones adicionales de CA-17 y CA-18 en la suite de pruebas) han sido satisfechos y cuentan con evidencias explícitas tanto en los tests automatizados (node --test) como en las pruebas manuales documentadas de ejecución directa bajo file://. El entregable cumple con los estándares de arquitectura y calidad exigidos.

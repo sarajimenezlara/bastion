@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bastión — Tower Defense</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <header id="top-bar" class="panel">
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-label">Vidas</span>
+          <span class="stat-value" id="stat-lives">20</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Oro</span>
+          <span class="stat-value" id="stat-gold">220</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Oleada</span>
+          <span class="stat-value" id="stat-wave">0/10</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Enemigos</span>
+          <span class="stat-value" id="stat-enemies">0</span>
+        </div>
+      </div>
+      <div class="controls">
+        <button id="btn-pause" type="button" aria-pressed="false">Pausa</button>
+        <button id="btn-speed" type="button" aria-pressed="false" title="Velocidad 1x/2x (F)">1x</button>
+        <button id="btn-next-wave" type="button" title="Llamar a la siguiente oleada">Siguiente oleada</button>
+      </div>
+    </header>
+
+    <main id="board">
+      <div id="canvas-wrap">
+        <canvas id="game-canvas" width="800" height="480" aria-label="Tablero de Bastión"></canvas>
+      </div>
+    </main>
+
+    <aside id="tower-panel" class="panel">
+      <h2>Torre seleccionada</h2>
+      <p id="tower-empty" class="hint">Ninguna torre seleccionada. Haz clic en una torre del tablero.</p>
+      <div id="tower-details" hidden>
+        <h3 id="tower-name"></h3>
+        <dl class="tower-stats">
+          <div><dt>Nivel</dt><dd id="tower-level"></dd></div>
+          <div><dt>Daño</dt><dd id="tower-damage"></dd></div>
+          <div><dt>Rango</dt><dd id="tower-range"></dd></div>
+          <div><dt>Cadencia</dt><dd id="tower-rate"></dd></div>
+          <div><dt>Tipo</dt><dd id="tower-type"></dd></div>
+        </dl>
+        <button id="btn-upgrade" type="button">Mejorar</button>
+        <button id="btn-sell" type="button" class="secondary">Vender</button>
+      </div>
+    </aside>
+
+    <footer id="tower-shop" class="panel">
+      <button class="tower-card" type="button" data-type="Ballesta" aria-pressed="false">
+        <canvas class="tower-icon" width="56" height="56" aria-hidden="true"></canvas>
+        <span class="tower-name">Ballesta</span>
+        <span class="tower-cost">50 oro</span>
+        <span class="tower-key">1</span>
+      </button>
+      <button class="tower-card" type="button" data-type="Canon" aria-pressed="false">
+        <canvas class="tower-icon" width="56" height="56" aria-hidden="true"></canvas>
+        <span class="tower-name">Cañón</span>
+        <span class="tower-cost">100 oro</span>
+        <span class="tower-key">2</span>
+      </button>
+      <button class="tower-card" type="button" data-type="Escarcha" aria-pressed="false">
+        <canvas class="tower-icon" width="56" height="56" aria-hidden="true"></canvas>
+        <span class="tower-name">Escarcha</span>
+        <span class="tower-cost">80 oro</span>
+        <span class="tower-key">3</span>
+      </button>
+      <button class="tower-card" type="button" data-type="Arcana" aria-pressed="false">
+        <canvas class="tower-icon" width="56" height="56" aria-hidden="true"></canvas>
+        <span class="tower-name">Arcana</span>
+        <span class="tower-cost">150 oro</span>
+        <span class="tower-key">4</span>
+      </button>
+    </footer>
+  </div>
+
+  <div id="overlay" class="overlay" hidden>
+    <div class="overlay-card">
+      <h1 id="overlay-title">Bastión</h1>
+      <p id="overlay-text"></p>
+      <p id="overlay-score" class="overlay-score"></p>
+      <p id="overlay-record" class="overlay-record"></p>
+      <button id="overlay-button" type="button">Jugar</button>
+    </div>
+  </div>
+
+  <!-- Core: se carga con etiquetas <script> normales para que funcione con file:// -->
+  <script src="src/core/Vector2D.js"></script>
+  <script src="src/core/GameMap.js"></script>
+  <script src="src/core/Enemy.js"></script>
+  <script src="src/core/Projectile.js"></script>
+  <script src="src/core/Tower.js"></script>
+  <script src="src/core/TowerManager.js"></script>
+  <script src="src/core/WaveManager.js"></script>
+  <script src="src/core/GameEngine.js"></script>
+
+  <!-- Presentación -->
+  <script src="src/presentation/InputMap.js"></script>
+  <script src="src/presentation/RecordStore.js"></script>
+  <script src="src/presentation/GameLoop.js"></script>
+  <script src="src/presentation/CanvasRenderer.js"></script>
+  <script src="src/presentation/UIController.js"></script>
+  <script src="src/presentation/main.js"></script>
+</body>
+</html>

@@ -17,7 +17,7 @@ const WaveManagerRef =
       ? require('./WaveManager.js')
       : null;
 
-const TowerRef =
+const TowerRefEngine =
   typeof window !== 'undefined' && window.Tower
     ? window.Tower
     : typeof require !== 'undefined'
@@ -73,6 +73,19 @@ class GameEngine {
   }
 
   /**
+   * Empieza la partida en fase de construcción: oleada 0 y sin enemigos.
+   * La oleada 1 se lanza aparte con `callNextWave()` («Siguiente oleada»),
+   * tal y como fija la entrevista del GDD (activación manual de oleadas).
+   * @returns {boolean} true si la partida estaba en MENU y ha arrancado
+   */
+  startGame() {
+    if (this.state !== 'MENU') return false;
+
+    this.state = 'PLAYING';
+    return true;
+  }
+
+  /**
    * CA-05: construye una torre de nivel 1 si la casilla es válida y hay oro.
    * Un intento fallido no modifica ningún estado (docs/decisiones/fase-2.md, decisión 1).
    * @param {string} type 'Ballesta' | 'Canon' | 'Escarcha' | 'Arcana'
@@ -81,7 +94,7 @@ class GameEngine {
    * @returns {object|false} la torre creada o false
    */
   placeTower(type, col, row) {
-    const config = TowerRef.getConfig(type, 1);
+    const config = TowerRefEngine.getConfig(type, 1);
     if (!config) return false;
     if (!this.towerManager.canPlace(col, row)) return false;
     if (this.gold < config.baseCost) return false;

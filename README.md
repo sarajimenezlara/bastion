@@ -6,11 +6,32 @@ sin servidores, sin bundlers y sin librerías externas.
 ## Requisitos
 
 - Node.js 18 o superior (solo para ejecutar las pruebas automáticas).
-- Un navegador moderno con soporte de Canvas 2D (solo para jugar, a partir de la Fase 5).
+- Un navegador moderno con soporte de Canvas 2D (solo para jugar).
 
 ## Cómo jugar
 
-Pendiente: la interfaz gráfica y el bucle de renderizado llegan en la Fase 5.
+Abre `index.html` con doble clic y pulsa **Jugar**. La partida empieza en la **oleada 0**, en fase de
+construcción y sin enemigos: coloca tus torres y lanza la primera oleada con «Siguiente oleada».
+El tablero tiene una entrada, un camino serpentina y un castillo al que no deben llegar los enemigos.
+
+- Elige una torre en el panel inferior (o con las teclas `1`-`4`) y haz clic en una casilla.
+  Al pasar el ratón se ve la torre fantasma y su alcance: **verde** si se puede construir,
+  **rojo** si la casilla está ocupada, es camino o no hay oro. Pulsar otra vez la misma tecla
+  mantiene la torre elegida, para colocar varias seguidas.
+- Haz clic sobre una torre construida para ver su nivel, daño, rango y cadencia, mejorarla o venderla.
+- «Siguiente oleada» lanza la siguiente oleada y, si ya hay una activa, paga un bonus por los
+  enemigos que aún no han salido.
+
+| Tecla | Acción |
+| --- | --- |
+| `1`-`4` | Elegir Ballesta, Cañón, Escarcha o Arcana |
+| `Espacio` | Pausar / reanudar |
+| `F` | Alternar velocidad 1x / 2x |
+| `Escape` | Cancelar la selección |
+| `U` | Mejorar la torre seleccionada |
+| `V` | Vender la torre seleccionada |
+
+Al ganar o perder se muestra la puntuación final y el récord se guarda en `localStorage`.
 
 ## Pruebas
 
@@ -29,8 +50,8 @@ tiene al menos una prueba cuyo nombre empieza por su código (`CA-01`, `CA-02`, 
 | 2 | Sistema de construcción: `Tower`, `TowerManager`, rejilla construible, costes y reventa | ✅ Completada |
 | 3 | Combate, proyectiles, tolerancia de 8 px y tipos de daño | ✅ Completada |
 | 4 | `WaveManager` completo, escalado de salud e integración del motor (`GameEngine`, vidas, victoria/derrota) | ✅ Completada |
-| 5 | `CanvasRenderer` y `UIController` (HTML/DOM) | ⏳ Pendiente |
-| 6 | Pantallas superpuestas, atajos de teclado y `localStorage` | ⏳ Pendiente |
+| 5 | `CanvasRenderer` y `UIController` (HTML/DOM) | ✅ Completada |
+| 6 | Pantallas superpuestas, atajos de teclado y `localStorage` | ✅ Completada |
 
 ### Fase 1 — Módulos lógicos del core
 
@@ -93,7 +114,24 @@ Piezas añadidas:
 
 Decisiones de diseño de la fase: [`docs/decisiones/fase-4.md`](docs/decisiones/fase-4.md).
 
-Fuera de alcance en esta fase (se implementan después según el roadmap):
+### Fases 5 y 6 — Renderizado, interfaz y ejecución directa `file://`
 
-- Renderizado, HUD, bucle de dibujo y `index.html` → Fases 5 y 6.
-- Pantallas superpuestas, atajos de teclado y `localStorage` → Fase 6.
+Criterios cubiertos:
+
+- **CA-14** — `index.html` se abre con doble clic sin servidor: todos los scripts son etiquetas `<script>` normales (sin `type="module"` ni `import`/`export`), el core se carga antes que la presentación y no hay recursos externos. La partida se dibuja con `requestAnimationFrame` y el motor recibe un `deltaTime` limitado a **0,1 s** para que cambiar de pestaña no provoque saltos.
+- **CA-15** — La interfaz responde a `1`-`4` (elegir torre), `Espacio` (pausa), `F` (1x/2x), `Escape` (cancelar), `U` (mejorar) y `V` (vender). La comprobación manual se hace jugando; la traducción tecla → acción y clic → casilla se verifica con `npm test`.
+- **CA-16** — Al ganar o perder se muestra el menú superpuesto con la puntuación y el récord se guarda en `localStorage` (clave `bastion.record`), tolerando almacenamiento bloqueado o corrupto.
+
+Piezas añadidas:
+
+- `index.html` — estructura del HUD superior (vidas, oro, oleada, enemigos, pausa, velocidad y siguiente oleada), canvas del tablero, panel de la torre seleccionada, panel inferior con las 4 torres y capas de inicio/victoria/derrota.
+- `styles.css` — disposición en rejilla, tarjetas de torre y pantallas superpuestas.
+- `src/presentation/CanvasRenderer.js` — dibujo con primitivas de Canvas: damero de hierba, camino de tierra con borde, entrada y castillo, torres con color y marcas de nivel, enemigos con tamaño por tipo, barra de vida y tinte azul al ralentizarse, torre fantasma con alcance verde/rojo, alcance de la torre seleccionada y destello del Cañón al impactar.
+- `src/presentation/UIController.js` — HUD, tarjetas, panel de la torre, atajos, clics sobre el tablero y pantallas superpuestas.
+- `src/presentation/InputMap.js` — traducción pura de teclas y clics a acciones (sin DOM).
+- `src/presentation/RecordStore.js` — récord en `localStorage` con validación y tolerancia a errores.
+- `src/presentation/GameLoop.js` — bucle de `requestAnimationFrame` con el tope de 0,1 s por frame.
+- `src/presentation/main.js` — arranque que une motor, renderizador, interfaz y bucle.
+- `Projectile` y `GameEngine` — renombradas sus referencias internas (`Vector2DRefProjectile`, `TowerRefEngine`) para que dos scripts clásicos no redeclaren la misma constante global y rompan la carga bajo `file://`.
+
+Decisiones de diseño de la fase: [`docs/decisiones/fase-5.md`](docs/decisiones/fase-5.md).
