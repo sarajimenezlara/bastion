@@ -61,6 +61,10 @@ class TowerManager {
     if (!this.canPlace(col, row)) return null;
 
     const tower = new TowerRef(null, type, col, row);
+    // Centro real de la casilla según la rejilla del mapa (usado por findTarget).
+    if (this.map && typeof this.map.cellCenter === 'function') {
+      tower.position = this.map.cellCenter(col, row);
+    }
     this.towers.push(tower);
     this.map.occupyCell(col, row);
     return tower;

@@ -1,7 +1,14 @@
-// Tower: entidad construible del core (nivel, inversión y valor de reventa).
-// Los atributos de combate se limitan a los datos del catálogo del GDD (Tabla 1):
-// disparar, apuntar y mejorar son responsabilidad de la Fase 3.
+// Tower: entidad construible del core (nivel, inversión, reventa y combate).
+// Fase 3: selección de objetivo (CA-08), disparo con cadencia y mejora de nivel (CA-07).
+// Los atributos salen del catálogo del GDD (Tabla 1).
 // Patrón UMD simplificado: compatible con navegador (window) y node --test (CommonJS).
+
+const Vector2DRefTower =
+  typeof window !== 'undefined' && window.Vector2D
+    ? window.Vector2D
+    : typeof require !== 'undefined'
+      ? require('./Vector2D.js')
+      : null;
 
 // Catálogo de la Tabla 1 del GDD. `levels[i]` corresponde al nivel i + 1.
 const TOWER_CONFIGS = {
@@ -63,7 +70,7 @@ class Tower {
     this.level = resolved.level;
     this.maxLevel = Tower.CONFIGS[type].levels.length;
     this.baseCost = resolved.baseCost;
-    // Inversión acumulada: coste base + mejoras pagadas (las mejoras llegan en la Fase 3).
+    // Inversión acumulada: coste base + mejoras pagadas (CA-07).
     this.totalInvested = resolved.baseCost;
     this.range = resolved.range; // px
     this.damage = resolved.damage;
@@ -74,6 +81,22 @@ class Tower {
     this.slowFactor = resolved.slowFactor || 0;
     this.slowDuration = resolved.slowDuration || 0;
     this.cooldownTimer = 0;
+    // Centro de la casilla en píxeles; TowerManager lo ajusta con la rejilla real.
+    const center = Tower.cellCenter(col, row);
+    this.position = new Vector2DRefTower(center.x, center.y);
+  }
+
+  /**
+   * Centro en píxeles de una casilla con el tamaño de baldosa por defecto (40 px).
+   * @param {number} col
+   * @param {number} row
+   * @returns {{x:number,y:number}}
+   */
+  static cellCenter(col, row) {
+    return {
+      x: col * Tower.TILE_SIZE + Tower.TILE_SIZE / 2,
+      y: row * Tower.TILE_SIZE + Tower.TILE_SIZE / 2,
+    };
   }
 
   /** Genera el siguiente identificador del contador global. */
@@ -118,6 +141,118 @@ class Tower {
   }
 
   /**
+   * CA-07: coste exacto de la siguiente mejora, CosteBase × NivelDestino (Tabla 1).
+   * @returns {number|null} null si la torre ya está al máximo
+   */
+  getUpgradeCost() {
+    if (this.level >= this.maxLevel) return null;
+    return Tower.getUpgradeCost(this.type, this.level + 1);
+  }
+
+  /**
+   * CA-07: coste de mejora de un tipo hasta un nivel destino (CosteBase × NivelDestino).
+   * @param {string} type
+   * @param {number} targetLevel 2..maxLevel
+   * @returns {number|null} null si el tipo o el nivel no son válidos
+   */
+  static getUpgradeCost(type, targetLevel) {
+    const entry = Tower.CONFIGS[type];
+    if (!entry) return null;
+    if (!Number.isInteger(targetLevel)) return null;
+    if (targetLevel < 2 || targetLevel > entry.levels.length) return null;
+    return entry.baseCost * targetLevel;
+  }
+
+  /**
+   * CA-07: sube un nivel, aplica las estadísticas de la Tabla 1 y acumula la inversión.
+   * No gestiona oro (lo hace GameEngine.upgradeTower).
+   * @returns {number|false} coste pagado o false si ya está al máximo
+   */
+  upgrade() {
+    const cost = this.getUpgradeCost();
+    if (cost === null) return false;
+
+    const config = Tower.getConfig(this.type, this.level + 1);
+    if (!config) return false;
+
+    this.level = config.level;
+    this.range = config.range;
+    this.damage = config.damage;
+    this.fireRate = config.fireRate;
+    this.projectileSpeed = config.projectileSpeed;
+    this.damageType = config.damageType;
+    this.areaOfEffect = config.areaOfEffect || 0;
+    this.slowFactor = config.slowFactor || 0;
+    this.slowDuration = config.slowDuration || 0;
+    this.totalInvested += cost;
+
+    return cost;
+  }
+
+  /**
+   * CA-08: enemigo dentro del rango con mayor `distanceTraveled` (el más avanzado).
+   * Los enemigos muertos o que ya alcanzaron la meta se ignoran.
+   * @param {Array} enemies
+   * @returns {object|null}
+   */
+  findTarget(enemies = []) {
+    if (!Array.isArray(enemies)) return null;
+
+    let best = null;
+    for (const enemy of enemies) {
+      if (!enemy || enemy.isDead || enemy.hasReachedEnd) continue;
+      if (!enemy.position) continue;
+
+      const distance = Math.hypot(
+        enemy.position.x - this.position.x,
+        enemy.position.y - this.position.y
+      );
+      if (distance > this.range) continue;
+      if (best === null || enemy.distanceTraveled > best.distanceTraveled) {
+        best = enemy;
+      }
+    }
+
+    return best;
+  }
+
+  /**
+   * CA-08 / CA-10: procesa la cadencia y dispara al objetivo elegido.
+   * @param {number} deltaTime segundos
+   * @param {Array} enemies
+   * @param {Function} [createProjectileCallback] (tower, target) => Projectile
+   * @returns {object|null} último proyectil creado en este tick
+   */
+  update(deltaTime, enemies = [], createProjectileCallback = null) {
+    const delta = Math.max(0, Number(deltaTime) || 0);
+    this.cooldownTimer -= delta;
+
+    const period = this.fireRate > 0 ? 1 / this.fireRate : 0;
+    let lastProjectile = null;
+    let shots = 0;
+
+    // Bucle acotado: permite recuperar cadencia con deltas grandes sin desbordarse.
+    while (this.cooldownTimer <= 0 && shots < 10) {
+      const target = this.findTarget(enemies);
+      if (!target) {
+        // Sin objetivo se queda lista para disparar en cuanto aparezca uno.
+        this.cooldownTimer = 0;
+        break;
+      }
+
+      if (typeof createProjectileCallback === 'function') {
+        lastProjectile = createProjectileCallback(this, target) || null;
+      }
+
+      shots += 1;
+      this.cooldownTimer += period > 0 ? period : 1;
+      if (period <= 0) break;
+    }
+
+    return lastProjectile;
+  }
+
+  /**
    * CA-06: valor de reventa, 70% de la inversión total redondeado hacia abajo.
    * @returns {number} oro devuelto
    */
@@ -128,6 +263,7 @@ class Tower {
 
 Tower.CONFIGS = TOWER_CONFIGS;
 Tower.TYPES = Object.keys(TOWER_CONFIGS);
+Tower.TILE_SIZE = 40;
 
 if (typeof window !== 'undefined') {
   window.Tower = Tower;

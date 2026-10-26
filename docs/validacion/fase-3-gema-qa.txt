@@ -1,0 +1,41 @@
+Bastión · Revisora QA
+Gem personalizado
+Bastión · Revisora QA ha dicho
+1. Resumen de Evaluación
+
+Fase evaluada: Fase 3: Torres, Combat & Proyectiles
+
+Estado general: APTO
+
+2. Tabla de Criterios de Aceptación
+Criterio	Estado	Evidencia / Justificación
+CA-07	CUMPLE	Verificado en src/core/Tower.js (getUpgradeCost, upgrade) y src/core/GameEngine.js (upgradeTower). La fórmula aplicada es exactamente 
+CosteBase×NivelDestino. Validado por pruebas unitarias en tests/CA-07_tower_upgrade.test.js (los 5 tests pasados).
+CA-08	CUMPLE	Verificado en src/core/Tower.js (findTarget). La torre itera sobre la lista de enemigos, descarta muertos (isDead) o los que ya alcanzaron la meta (hasReachedEnd), comprueba el rango euclídeo y selecciona al enemigo con mayor distanceTraveled. Validado en tests/CA-08_tower_targeting.test.js (los 5 tests pasados).
+CA-09	CUMPLE	Verificado en src/core/Projectile.js (impact) y src/core/Enemy.js (applySlow). La torre Escarcha aplica slowFactor = 0.6 y slowDuration = 2.0. El método applySlow sobrescribe slowTimer = duration sin acumular factor extra. Validado en tests/CA-09_tower_frost.test.js (los 4 tests pasados).
+CA-10	CUMPLE	Verificado en src/core/Projectile.js (moveToward, impact). Constante IMPACT_TOLERANCE = 8 px. Los deltas de movimiento se acotan para evitar que atraviesen al objetivo. Se contemplan casos borde como la destrucción de objetivos en vuelo para proyectiles mono-objetivo y proyectiles con daño en área (Cañón). Validado en tests/CA-10_projectile_impact.test.js (los 9 tests pasados).
+3. Análisis de Riesgos y Calidad
+
+Rendimiento y Loop de Juego:
+
+En Tower.prototype.update, el bucle que consume la cadencia acumulada está acotado a un máximo de 10 disparos por tick (shots < 10). Esto evita loops infinitos o picos repentinos de procesamiento en el caso de deltas de tiempo inusualmente grandes.
+
+La eliminación de proyectiles en GameEngine.prototype.tick se realiza mediante filtrado inmutable (this.projectiles = this.projectiles.filter(...)), evitando errores de desincronización de índices típicos de splice dentro de iteraciones.
+
+Lógica y Arquitectura:
+
+Manejo de pérdida de objetivo: Excelente implementación en Projectile.prototype.update y moveToward. Si el objetivo directo muere antes de impactar, el proyectil estándar se marca como isExpired sin realizar daño, mientras que los proyectiles con área de efecto (Cañón) continúan hacia lastTargetPosition y aplican su radio de explosión correctamente.
+
+Compatibilidad de entornos: Módulo UMD limpio en todos los archivos core (Tower.js, Projectile.js, GameEngine.js), permitiendo la importación directa mediante CommonJS para node --test y exposición en window para el entorno de navegador/Canvas.
+
+Mantenibilidad:
+
+Código bien estructurado y documentado con JSDoc.
+
+Separación clara entre la resolución lógica (core) y los efectos puramente visuales delegados a fases posteriores.
+
+4. Veredicto Final y Pasos a Seguir
+
+VEREDICTO: APTO
+
+Todos los Criterios de Aceptación (CA-07 a CA-10) han sido verificados satisfactoriamente tanto a nivel de código fuente como a través de la suite automatizada de pruebas (59 tests pasados, 0 fallados). El entregable de la Fase 3 cumple íntegramente con los requisitos de arquitectura y lógica de combate del videojuego «Bastión».
