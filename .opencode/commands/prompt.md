@@ -1,7 +1,7 @@
 ---
 description: Refina y optimiza una instrucción para hacerla más clara, precisa y efectiva para el modelo.
 agent: plan
-model: openrouter/openrouter/free
+model: openrouter/poolside/laguna-s-2.1:free
 arguments:
   - name: instruccion
     description: El prompt inicial que deseas optimizar.

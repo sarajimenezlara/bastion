@@ -1,7 +1,7 @@
 ---
 description: Prepara el informe de una fase para pegarlo en la gema «Bastión · Revisora QA» de Gemini
 agent: plan
-model: openrouter/openrouter/free
+model: openrouter/poolside/laguna-s-2.1:free
 ---
 Redacta un mensaje para la revisora de calidad de Gemini sobre la **Fase $1** de Bastión. Usa SOLO los datos de abajo, sin inventar nada.
 

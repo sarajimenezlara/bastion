@@ -1,0 +1,40 @@
+Bastión · Revisora QA
+Gem personalizado
+Bastión · Revisora QA ha dicho
+1. Resumen de Evaluación
+
+Fase evaluada: Fase 1: Módulos Lógicos del Core (Sin DOM ni CORS)
+
+Estado general: APTO
+
+2. Tabla de Criterios de Aceptación
+Criterio	Estado	Evidencia / Justificación
+CA-01	CUMPLE	Verificado en src/core/GameEngine.js (L18: lives = 20, L19: gold = 150, towers, enemies, projectiles como arreglos vacíos) y en src/core/WaveManager.js (currentWaveIndex = 0). Respaldado por la ejecución limpia de los 4 tests en tests/CA-01_engine_init.test.js.
+CA-02	CUMPLE	Verificado en src/core/Enemy.js (L68-L70: received = damageType === 'PHYSICAL' ? Math.max(1, baseDamage - this.armor) : baseDamage). Supera los 4 tests correspondientes en tests/CA-02_enemy_damage.test.js.
+CA-03	CUMPLE	Verificado en src/core/Enemy.js (L13: const WAYPOINT_TOLERANCE = 2; y L118: if (distance <= WAYPOINT_TOLERANCE)). El bucle update procesa adecuadamente la distancia euclídea (
+≤2 px) y la distancia sobrante. Validado por 6 tests en tests/CA-03_enemy_waypoints.test.js.
+3. Análisis de Riesgos y Calidad
+
+Rendimiento y Loop de Juego:
+
+En Enemy.js (L110), el bucle while para procesar waypoints cuenta con un límite de seguridad de iteraciones (iterations < 1000). Esto previene bucles infinitos en caso de inconsistencias o listas circulares en la ruta.
+
+La actualización de movimiento calcula el delta consumido sin instanciar objetos innecesarios en el game loop, reduciendo la presión sobre el recolector de basura (GC).
+
+Lógica y Arquitectura:
+
+Patrón UMD simplificado implementado de forma consistente en todos los módulos (Vector2D, Enemy, Map, WaveManager, GameEngine), garantizando compatibilidad dual tanto para entornos CommonJS (node --test) como para inclusión directa en navegador vía global window.
+
+Encapsulamiento de lógica y uso de guardas frente a valores nulos o no válidos (Math.max(0, Number(deltaTime) || 0)) previenen estados inconsistentes si dt llega descalibrado.
+
+Mantenibilidad:
+
+Separación clara de responsabilidades entre navegación (Enemy), mapa (Map) y control global (GameEngine).
+
+No se identifican code smells críticos ni deuda técnica en esta entrega.
+
+4. Veredicto Final y Pasos a Seguir
+
+VEREDICTO: APTO
+
+Todos los criterios de aceptación especificados para la Fase 1 han sido implementados y validados formalmente mediante pruebas unitarias (14/14 pass). El código presenta una estructura limpia, robusta y alineada con los requisitos de JS Vanilla e HTML5 Canvas. Se autoriza el avance a la Fase 2 (Construcción, Terreno y Reventa).

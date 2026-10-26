@@ -15,6 +15,9 @@
             "models": {
                 "openrouter/free": {
                     "name": "OpenRouter Auto Free Router"
+                },
+                "poolside/laguna-s-2.1:free": {
+                    "name": "Poolside Laguna S 2.1 (gratis en OpenRouter)"
                 }
             }
         },
