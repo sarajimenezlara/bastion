@@ -1,4 +1,4 @@
-// CA-15: los atajos de teclado del GDD (1-4, Espacio, F, Escape, U, V) y la
+// CA-15: los atajos de teclado del GDD (1-4, Espacio, F, A, Escape, U, V) y la
 // traducción de clics a casillas. InputMap no toca el DOM, así que se puede
 // verificar íntegramente con `node --test`. Las pruebas de selección usan
 // UIController con referencias de canvas simuladas (sin DOM real).
@@ -66,8 +66,13 @@ test('CA-15 U mejora y V vende la torre seleccionada', () => {
   assert.deepEqual(actionForEvent({ key: 'V' }), { type: 'sellSelected' });
 });
 
+test('CA-15 A activa y desactiva las oleadas automáticas', () => {
+  assert.deepEqual(actionForEvent({ key: 'a' }), { type: 'toggleAutoWaves' });
+  assert.deepEqual(actionForEvent({ key: 'A' }), { type: 'toggleAutoWaves' });
+});
+
 test('CA-15 las teclas no atajadas devuelven null', () => {
-  for (const key of ['a', 'z', '0', '5', 'Enter', 'ArrowUp', 'Tab', '']) {
+  for (const key of ['z', '0', '5', 'Enter', 'ArrowUp', 'Tab', '']) {
     assert.equal(actionForEvent({ key }), null, `«${key}» no debe atajarse`);
   }
   assert.equal(actionForEvent(null), null);

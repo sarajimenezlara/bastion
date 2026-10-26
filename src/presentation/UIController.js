@@ -65,6 +65,7 @@ class UIController {
       enemies: this.dom.getElementById('stat-enemies'),
       pause: this.dom.getElementById('btn-pause'),
       speed: this.dom.getElementById('btn-speed'),
+      autoWave: this.dom.getElementById('btn-auto-wave'),
       nextWave: this.dom.getElementById('btn-next-wave'),
       cards: Array.from(this.dom.querySelectorAll('.tower-card')),
       towerEmpty: this.dom.getElementById('tower-empty'),
@@ -134,6 +135,9 @@ class UIController {
     }
     if (refs.speed) {
       refs.speed.addEventListener('click', () => this.runAction({ type: 'toggleSpeed' }));
+    }
+    if (refs.autoWave) {
+      refs.autoWave.addEventListener('click', () => this.runAction({ type: 'toggleAutoWaves' }));
     }
     if (refs.nextWave) {
       refs.nextWave.addEventListener('click', () => this.callNextWave());
@@ -216,10 +220,26 @@ class UIController {
       }
     }
 
+    if (this.refs.autoWave) {
+      const pressed = String(engine.autoWaves);
+      if (this.refs.autoWave.getAttribute('aria-pressed') !== pressed) {
+        this.refs.autoWave.setAttribute('aria-pressed', pressed);
+      }
+      if (this.refs.autoWave.disabled !== finished) this.refs.autoWave.disabled = finished;
+    }
+
     if (this.refs.nextWave) {
+      const countdown = Number(engine.autoWaveTimer) || 0;
       const pending = engine.waveManager.isWaveActive ? engine.waveManager.pendingCount() : 0;
       const bonus = Math.floor(pending * 2) + 15;
-      const label = pending > 0 ? `Siguiente oleada (+${bonus} oro)` : 'Siguiente oleada';
+      let label = 'Siguiente oleada';
+
+      if (countdown > 0) {
+        label = `Siguiente oleada en ${Math.ceil(countdown)} s`;
+      } else if (pending > 0) {
+        label = `Siguiente oleada (+${bonus} oro)`;
+      }
+
       this.setText(this.refs.nextWave, label);
       const disabled = finished || !engine.waveManager.hasMoreWaves();
       if (this.refs.nextWave.disabled !== disabled) this.refs.nextWave.disabled = disabled;
@@ -411,6 +431,9 @@ class UIController {
       case 'toggleSpeed':
         this.toggleSpeed();
         break;
+      case 'toggleAutoWaves':
+        this.toggleAutoWaves();
+        break;
       case 'cancelSelection':
         this.cancelSelection();
         break;
@@ -489,6 +512,15 @@ class UIController {
     if (!this.engine) return;
 
     this.engine.gameSpeed = this.engine.gameSpeed === 2 ? 1 : 2;
+    this.update();
+  }
+
+  /** CA-19: activa o desactiva las oleadas automáticas. @returns {void} */
+  toggleAutoWaves() {
+    if (!this.engine) return;
+    if (this.engine.state === 'VICTORY' || this.engine.state === 'DEFEAT') return;
+
+    this.engine.toggleAutoWaves();
     this.update();
   }
 

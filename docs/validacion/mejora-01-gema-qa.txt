@@ -1,0 +1,46 @@
+Bastión · Revisora QA
+Gem personalizado
+Bastión · Revisora QA ha dicho
+1. Resumen de Evaluación
+
+Fase evaluada: Mejora 01 · Oleadas automáticas (Incorporación de CA-19 y actualización de CA-15)
+
+Estado general: APTO
+
+2. Tabla de Criterios de Aceptación
+Criterio	Estado	Evidencia / Justificación
+CA-15 (Actualización)	CUMPLE	Comprobado en la suite de tests (✔ CA-15 A activa y desactiva las oleadas automáticas). La tecla A queda asociada a la activación/desactivación del modo automático sin interrumpir la entrada de texto ni repetirse indeseadamente.
+CA-19 (Auto-oleadas base)	CUMPLE	Evidenciado en CA-19_auto_waves.test.js línea 45 y en GameEngine.js (AUTO_WAVE_DELAY = 5). Al finalizar una oleada con Auto activo, arranca la cuenta atrás de 5 segundos y se ejecuta la siguiente oleada.
+CA-19 (Lanzamiento manual inicial)	CUMPLE	Evidenciado en CA-19_auto_waves.test.js líneas 48-52. Al iniciar la partida en oleada 0, activar Auto no lanza automáticamente la oleada 1; requiere el primer inicio manual.
+CA-19 (Pausa y Velocidad 2x)	CUMPLE	Evidenciado en CA-19_auto_waves.test.js líneas 79-96 y 98-108. En GameEngine.js, el método updateAutoWaves(delta) recibe el tiempo escalado por this.gameSpeed, congelándose cuando el juego se pausa (delta <= 0).
+CA-19 (Cancelación y Adelanto)	CUMPLE	Evidenciado en CA-19_auto_waves.test.js líneas 110-129 y 146-156. Desactivar Auto con setAutoWaves(false) reinicia autoWaveTimer a 0. Llamar a callNextWave() resetea la cuenta atrás y lanza la oleada al momento.
+CA-19 (Ausencia de Bonus Auto)	CUMPLE	Evidenciado en CA-19_auto_waves.test.js líneas 131-144. La ejecución diferida a través de updateAutoWaves invoca startNextWave(), omitiendo el flujo de recompensa por adelantado de callNextWave().
+CA-19 (Límite tras oleada 10)	CUMPLE	Evidenciado en CA-19_auto_waves.test.js líneas 158-173. Al llegar a la oleada 10 y pasar el motor a estado VICTORY, scheduleAutoWaveIfReady() retorna false por la comprobación hasMoreWaves().
+CA-19 (Reflejo en Interfaz/DOM)	CUMPLE	Evidenciado en CA-19_auto_waves.test.js líneas 175-202. La capa UIController refleja el atributo aria-pressed en el botón #autoWave y actualiza la etiqueta de conteo en el botón de siguiente oleada.
+3. Análisis de Riesgos y Calidad
+
+Rendimiento y Loop de Juego:
+
+La cuenta atrás utiliza el tiempo delta acumulado de la simulación (delta escalado por gameSpeed), evitando desacoplamientos frente al refresco de pantalla o desfases con el estado del juego.
+
+No se generan asignaciones dinámicas ni objetos dentro del bucle de ejecución de updateAutoWaves(), manteniendo a cero la presión sobre el recolector de basura (GC).
+
+Lógica y Arquitectura:
+
+Desacoplamiento limpio: Toda la gestión de estado de las auto-oleadas se encuentra aislada en la capa de modelo/dominio (GameEngine), garantizando una cobertura del 100% mediante las pruebas unitarias en node --test sin depender de simulaciones complejas de DOM/Canvas.
+
+Uso de tolerancia de punto flotante: Se definió la constante AUTO_WAVE_EPSILON = 1e-9 para prevenir fallos en la detección del fin de la cuenta atrás generados por la imprecisión de los números de coma flotante en JavaScript al restar deltas.
+
+Mantenibilidad:
+
+El código sigue estrictamente los patrones de ES6 Vanilla (sin import/export, usando la detección de contexto window / require condicional para compatibilidad tanto en Node.js como en navegador).
+
+4. Veredicto Final y Pasos a Seguir
+
+VEREDICTO: APTO
+
+La entrega de la Mejora 01 por parte de OpenCode cumple con la totalidad de los requerimientos especificados en la descripción de comportamiento, pasa exitosamente la suite completa de pruebas (129 de 129 pruebas superadas) y no introduce regresiones ni riesgos técnicos en la arquitectura del juego.
+
+Siguientes acciones recomendadas para el proyecto:
+Continuar con la siguiente fase o mejora del GDD
+Revisar cobertura de pruebas globales

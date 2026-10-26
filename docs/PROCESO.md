@@ -70,7 +70,7 @@ día y un agente gasta una por cada paso.
 Cada fase pasa por cinco filtros:
 
 1. **Entrevista:** el agente `entrevistador` me pregunta lo que el GDD deja abierto (`docs/decisiones/`).
-2. **Pruebas automáticas:** `npm test`, con 119 pruebas. Cada criterio CA tiene pruebas cuyo nombre
+2. **Pruebas automáticas:** `npm test`, con 129 pruebas. Cada criterio CA tiene pruebas cuyo nombre
    empieza por su código.
 3. **Revisor local:** `/validar-fase N`, con Ollama, contrasta los criterios con la salida real de las pruebas.
 4. **Revisora QA de Gemini:** recibe el informe y el código, y da APTO o NO APTO (`docs/validacion/`).
@@ -86,6 +86,7 @@ Cada fase pasa por cinco filtros:
 | 4 · Oleadas | CA-11 a CA-13 | Aprobado | APTO |
 | Corrección 01 | balance v2.1, CA-17, CA-18 | — | APTO |
 | 5 y 6 · Interfaz | CA-14 a CA-16 (manuales) | Aprobado | APTO |
+| Mejora 01 · Oleadas automáticas | CA-19 | — | APTO |
 
 ### Fallos encontrados (y quién los encontró)
 
@@ -105,6 +106,15 @@ Cada fase pasa por cinco filtros:
 | 12 | «Jugar» lanzaba la oleada 1 sin dejar construir | Partida en el navegador | Corrección 02 |
 | 13 | Repetir la tecla de una torre la deseleccionaba | Partida en el navegador | Corrección 02 |
 | 14 | El revisor no podía validar los criterios manuales | El agente lo detectó y **me preguntó** si arreglaba `/validar-fase` | El comando inyecta la evidencia manual |
+
+### Mejoras posteriores
+
+| Mejora | Petición | Cómo se hizo |
+|---|---|---|
+| 01 · Oleadas automáticas | Un botón para que las oleadas sigan solas, manteniendo «Siguiente oleada» | Petición en `docs/mejoras/mejora-01-oleadas-automaticas.md` → `/corregir` (agente build) → CA-19 con 10 pruebas → prueba en el navegador → gema QA: APTO |
+
+El botón «Auto» (tecla A) lanza la siguiente oleada 5 s después de terminar la anterior, con cuenta atrás
+visible; «Siguiente oleada» sigue sirviendo para adelantarla.
 
 **Mejora pendiente:** pulsando «Siguiente oleada» sin parar y sin construir se consiguen 839 puntos
 con los bonus. Limitarlo es una decisión de diseño que correspondería a la Diseñadora.

@@ -343,8 +343,12 @@ $$\text{BonoOro} = \text{Math.floor}(\text{EnemigosPendientesEnCola} \times 2) +
 * **`CA-17` [AUTOMÁTICO - `node --test`]:** `GameEngine.callNextWave()` lanza la siguiente oleada. Si no hay ninguna activa, arranca la siguiente; si ya hay una y quedan oleadas, paga el bono de llamada anticipada ($\text{Math.floor}(\text{Pendientes} \times 2) + 15$) y añade los grupos de la siguiente a la cola de spawn, que empieza de inmediato. Lanzar la oleada 2 con 6 enemigos pendientes de la 1 otorga 27 de oro, la oleada actual pasa a ser la 2 y salen enemigos de ambas. Cada oleada paga su recompensa de fin al quedar terminada.
 * **`CA-18` [AUTOMÁTICO - `node --test`]:** La simulación de partidas completas de `scripts/simular-balance.js` (lógica reutilizada por la prueba, sin duplicarla) es un criterio de balance: «Sin torres» pierde antes de la oleada 4 y «Medio con mejoras» gana la partida.
 
+### Mejora 01: Oleadas automáticas
+
+* **`CA-19` [AUTOMÁTICO - `node --test`]:** Con «Auto» activado y la primera oleada ya lanzada a mano, al terminar una oleada y quedar oleadas por lanzar empieza una cuenta atrás de 5 s; al agotarse se lanza sola la siguiente sin bono de llamada anticipada. Sin «Auto» no se lanza nada. La pausa congela la cuenta atrás y la velocidad 2x la acelera; desactivar «Auto» cancela la cuenta atrás y pulsar «Siguiente oleada» la adelanta. Tras la oleada 10 no se lanza ninguna oleada más.
+
 ### Fase 5 & 6: Renderizado, UI y Ejecución Directa file://
 
 * **`CA-14` [MANUAL]:** Al hacer doble clic en `index.html` sin ningún servidor HTTP en marcha, el juego carga sin errores de JavaScript ni bloqueos CORS en la consola del navegador.
-* **`CA-15` [MANUAL]:** La interfaz gráfica responde a los atajos de teclado (`1`-`4` para elegir torres, `Espacio` para pausar, `F` para velocidad 1x/2x, `Escape` para cancelar selección, `U` para mejorar, `V` para vender).
+* **`CA-15` [MANUAL]:** La interfaz gráfica responde a los atajos de teclado (`1`-`4` para elegir torres, `Espacio` para pausar, `F` para velocidad 1x/2x, `A` para oleadas automáticas, `Escape` para cancelar selección, `U` para mejorar, `V` para vender).
 * **`CA-16` [MANUAL]:** Al ganar o perder, se despliega el menú superpuesto con la puntuación y el récord se almacena correctamente en `localStorage`.

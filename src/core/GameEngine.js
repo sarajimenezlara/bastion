@@ -45,6 +45,11 @@ const EnemyRef =
       ? require('./Enemy.js')
       : null;
 
+// Mejora 01: retardo entre el fin de una oleada y el lanzamiento automático
+// de la siguiente (CA-19).
+const AUTO_WAVE_DELAY = 5;
+const AUTO_WAVE_EPSILON = 1e-9;
+
 class GameEngine {
   constructor() {
     this.lives = 20;
@@ -58,6 +63,10 @@ class GameEngine {
     // docs/decisiones/fase-4.md fija el nombre 'DEFEAT'.
     this.state = 'MENU';
 
+    // CA-19: oleadas automáticas. La primera oleada siempre se lanza a mano.
+    this._autoWaves = false;
+    this.autoWaveTimer = 0; // segundos restantes de la cuenta atrás (0 = inactiva)
+
     this.map = new GameMapRef();
     this.towers = [];
     this.enemies = [];
@@ -70,6 +79,85 @@ class GameEngine {
   /** Índice de oleada actual (0 antes de empezar la primera oleada). */
   get currentWave() {
     return this.waveManager.currentWaveIndex;
+  }
+
+  /** CA-19: indica si las oleadas automáticas están activadas. @returns {boolean} */
+  get autoWaves() {
+    return this._autoWaves;
+  }
+
+  /**
+   * CA-19: al desactivar las oleadas automáticas se cancela la cuenta atrás.
+   * @param {boolean} enabled
+   * @returns {void}
+   */
+  set autoWaves(enabled) {
+    this._autoWaves = Boolean(enabled);
+    if (!this._autoWaves) this.autoWaveTimer = 0;
+  }
+
+  /**
+   * CA-19: activa o desactiva las oleadas automáticas. Al activarlas, si la
+   * partida ya está en marcha y no queda ninguna oleada activa, empieza la
+   * cuenta atrás de inmediato.
+   * @param {boolean} enabled
+   * @returns {boolean} estado resultante
+   */
+  setAutoWaves(enabled) {
+    this.autoWaves = enabled;
+    if (this.autoWaves) this.scheduleAutoWaveIfReady();
+    return this.autoWaves;
+  }
+
+  /**
+   * CA-19: alterna las oleadas automáticas.
+   * @returns {boolean} estado resultante
+   */
+  toggleAutoWaves() {
+    return this.setAutoWaves(!this.autoWaves);
+  }
+
+  /**
+   * CA-19: arranca la cuenta atrás de 5 s si procede. La primera oleada es
+   * manual, así que solo se programa después de haber lanzado alguna.
+   * @returns {boolean} true si ha empezado la cuenta atrás
+   */
+  scheduleAutoWaveIfReady() {
+    if (!this.autoWaves) return false;
+    if (this.state !== 'PLAYING') return false;
+    if (this.waveManager.isWaveActive) return false;
+    if (this.currentWave <= 0) return false;
+    if (!this.waveManager.hasMoreWaves()) return false;
+    if (this.autoWaveTimer > 0) return false;
+
+    this.autoWaveTimer = AUTO_WAVE_DELAY;
+    return true;
+  }
+
+  /**
+   * CA-19: avanza la cuenta atrás con el delta ya escalado por la velocidad y
+   * lanza la siguiente oleada al agotarse, sin bono de llamada anticipada.
+   * @param {number} delta segundos ya multiplicados por `gameSpeed`
+   * @returns {boolean} true si se ha lanzado la oleada automática
+   */
+  updateAutoWaves(delta) {
+    if (!this.autoWaves) {
+      this.autoWaveTimer = 0;
+      return false;
+    }
+    if (this.autoWaveTimer <= 0) return false;
+
+    // Una llamada manual pudo arrancar una oleada: la espera deja de tener sentido.
+    if (this.waveManager.isWaveActive) {
+      this.autoWaveTimer = 0;
+      return false;
+    }
+
+    this.autoWaveTimer -= delta;
+    if (this.autoWaveTimer > AUTO_WAVE_EPSILON) return false;
+
+    this.autoWaveTimer = 0;
+    return Boolean(this.startNextWave());
   }
 
   /**
@@ -227,6 +315,8 @@ class GameEngine {
     const definition = this.waveManager.startNextWave();
     if (!definition) return false;
 
+    // Cualquier lanzamiento cancela la espera de las oleadas automáticas.
+    this.autoWaveTimer = 0;
     this.state = 'PLAYING';
     return definition;
   }
@@ -255,6 +345,9 @@ class GameEngine {
    * @returns {object|false} definición de la oleada lanzada o false si no procede
    */
   callNextWave() {
+    // Pulsar «Siguiente oleada» adelanta la cuenta atrás automática.
+    this.autoWaveTimer = 0;
+
     if (!this.waveManager.isWaveActive) {
       const definition = this.waveManager.startNextWave();
       if (!definition) return false;
@@ -350,6 +443,9 @@ class GameEngine {
     const delta = Math.max(0, Number(deltaTime) || 0) * this.gameSpeed;
     if (delta <= 0) return;
 
+    // 0) Cuenta atrás de las oleadas automáticas (CA-19).
+    this.updateAutoWaves(delta);
+
     // 1) Oleadas: cada grupo activo avanza su propio flujo de spawn.
     this.waveManager.update(delta, (spawn) => this.spawnEnemy(spawn));
 
@@ -389,8 +485,13 @@ class GameEngine {
 
     // 6) Recompensa de oleada y transición a VICTORY tras la oleada 10 (CA-13).
     this.updateWaveState();
+
+    // CA-19: al terminar una oleada con «Auto» activo, prepara la siguiente.
+    this.scheduleAutoWaveIfReady();
   }
 }
+
+GameEngine.AUTO_WAVE_DELAY = AUTO_WAVE_DELAY;
 
 if (typeof window !== 'undefined') {
   window.GameEngine = GameEngine;

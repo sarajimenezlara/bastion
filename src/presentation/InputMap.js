@@ -53,6 +53,8 @@ function actionForEvent(event) {
   switch (key.toLowerCase()) {
     case 'f':
       return { type: 'toggleSpeed' };
+    case 'a':
+      return { type: 'toggleAutoWaves' };
     case 'u':
       return { type: 'upgradeSelected' };
     case 'v':

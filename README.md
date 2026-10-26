@@ -27,12 +27,16 @@ El tablero tiene una entrada, un camino serpentina y un castillo al que no deben
 - Haz clic sobre una torre construida para ver su nivel, daño, rango y cadencia, mejorarla o venderla.
 - «Siguiente oleada» lanza la siguiente oleada y, si ya hay una activa, paga un bonus por los
   enemigos que aún no han salido.
+- «Auto» activa las oleadas automáticas: al terminar una oleada espera 5 segundos y lanza la
+  siguiente. Durante la espera puedes construir, mejorar y vender; «Siguiente oleada» la adelanta.
+  Empieza desactivado y la primera oleada siempre se lanza a mano.
 
 | Tecla | Acción |
 | --- | --- |
 | `1`-`4` | Elegir Ballesta, Cañón, Escarcha o Arcana |
 | `Espacio` | Pausar / reanudar |
 | `F` | Alternar velocidad 1x / 2x |
+| `A` | Activar / desactivar las oleadas automáticas |
 | `Escape` | Cancelar la selección |
 | `U` | Mejorar la torre seleccionada |
 | `V` | Vender la torre seleccionada |
@@ -125,7 +129,7 @@ Decisiones de diseño de la fase: [`docs/decisiones/fase-4.md`](docs/decisiones/
 Criterios cubiertos:
 
 - **CA-14** — `index.html` se abre con doble clic sin servidor: todos los scripts son etiquetas `<script>` normales (sin `type="module"` ni `import`/`export`), el core se carga antes que la presentación y no hay recursos externos. La partida se dibuja con `requestAnimationFrame` y el motor recibe un `deltaTime` limitado a **0,1 s** para que cambiar de pestaña no provoque saltos.
-- **CA-15** — La interfaz responde a `1`-`4` (elegir torre), `Espacio` (pausa), `F` (1x/2x), `Escape` (cancelar), `U` (mejorar) y `V` (vender). La comprobación manual se hace jugando; la traducción tecla → acción y clic → casilla se verifica con `npm test`.
+- **CA-15** — La interfaz responde a `1`-`4` (elegir torre), `Espacio` (pausa), `F` (1x/2x), `A` (oleadas automáticas), `Escape` (cancelar), `U` (mejorar) y `V` (vender). La comprobación manual se hace jugando; la traducción tecla → acción y clic → casilla se verifica con `npm test`.
 - **CA-16** — Al ganar o perder se muestra el menú superpuesto con la puntuación y el récord se guarda en `localStorage` (clave `bastion.record`), tolerando almacenamiento bloqueado o corrupto.
 
 Piezas añadidas:
