@@ -1,5 +1,5 @@
 // GameEngine: estado y punto de entrada de la partida.
-// En la Fase 1 solo se define la inicialización exigida por CA-01.
+// Fase 1: inicialización (CA-01). Fase 2: construcción y reventa (CA-04 a CA-06).
 
 const MapRef =
   typeof window !== 'undefined' && window.Map
@@ -13,6 +13,20 @@ const WaveManagerRef =
     ? window.WaveManager
     : typeof require !== 'undefined'
       ? require('./WaveManager.js')
+      : null;
+
+const TowerRef =
+  typeof window !== 'undefined' && window.Tower
+    ? window.Tower
+    : typeof require !== 'undefined'
+      ? require('./Tower.js')
+      : null;
+
+const TowerManagerRef =
+  typeof window !== 'undefined' && window.TowerManager
+    ? window.TowerManager
+    : typeof require !== 'undefined'
+      ? require('./TowerManager.js')
       : null;
 
 class GameEngine {
@@ -30,11 +44,50 @@ class GameEngine {
     this.enemies = [];
     this.projectiles = [];
     this.waveManager = new WaveManagerRef();
+    // El gestor comparte la misma colección que `this.towers` (CA-01: colecciones vacías).
+    this.towerManager = new TowerManagerRef(this.map, this.towers);
   }
 
   /** Índice de oleada actual (0 antes de empezar la primera oleada). */
   get currentWave() {
     return this.waveManager.currentWaveIndex;
+  }
+
+  /**
+   * CA-05: construye una torre de nivel 1 si la casilla es válida y hay oro.
+   * Un intento fallido no modifica ningún estado (docs/decisiones/fase-2.md, decisión 1).
+   * @param {string} type 'Ballesta' | 'Canon' | 'Escarcha' | 'Arcana'
+   * @param {number} col
+   * @param {number} row
+   * @returns {object|false} la torre creada o false
+   */
+  placeTower(type, col, row) {
+    const config = TowerRef.getConfig(type, 1);
+    if (!config) return false;
+    if (!this.towerManager.canPlace(col, row)) return false;
+    if (this.gold < config.baseCost) return false;
+
+    const tower = this.towerManager.addTower(type, col, row);
+    if (!tower) return false;
+
+    this.gold -= tower.baseCost;
+    return tower;
+  }
+
+  /**
+   * CA-06: vende una torre y devuelve el 70% de la inversión total.
+   * El reembolso no cuenta como oro ganado (no altera `totalGoldEarned`).
+   * @param {number|string} towerId
+   * @returns {number|false} oro devuelto o false si la torre no existe
+   */
+  sellTower(towerId) {
+    const tower = this.towerManager.getTowerById(towerId);
+    if (!tower) return false;
+
+    const refund = tower.getRefundValue();
+    this.towerManager.removeTower(towerId);
+    this.gold += refund;
+    return refund;
   }
 }
 

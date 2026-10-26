@@ -1,0 +1,49 @@
+Bastión · Revisora QA
+Gem personalizado
+Bastión · Revisora QA ha dicho
+1. Resumen de Evaluación
+
+Fase evaluada: Fase 2 (Construcción y Reventa de Torres, Mapa y Rejilla)
+
+Estado general: APTO
+
+2. Tabla de Criterios de Aceptación
+Criterio	Estado	Evidencia / Justificación
+CA-04	CUMPLE	Map.js define el camino serpentina ortogonal con 59 casillas y la función isCellBuildable(col, row) (línea 145) restringe la construcción en bordes, casillas del camino y casillas ocupadas. Validado exhaustivamente en tests/CA-04_map_buildable.test.js.
+CA-05	CUMPLE	GameEngine.js implementa placeTower(type, col, row) (línea 64) verificando disponibilidad de oro, límites y estado de la casilla. Descuenta el oro según el catálogo del GDD (Tower.js línea 5) y delega la colocación y reserva a TowerManager.js. Probado en tests/CA-05_tower_placement.test.js.
+CA-06	CUMPLE	Tower.js implementa getRefundValue() (línea 124) calculando 
+Math.floor(totalInvested×0.7). GameEngine.js en sellTower(towerId) (línea 80) reasigna el oro y libera la casilla vía TowerManager.js / Map.js. Probado en tests/CA-06_tower_sell.test.js.
+3. Análisis de Riesgos y Calidad
+
+Rendimiento y Loop de Juego:
+
+Map.js utiliza estructuras Set (pathCells y occupiedCells) con claves de tipo cadena "col,row". Para un tablero de 
+20
+×
+12
+20×12 casillas, la sobrecarga de instanciación y comprobación de cadenas es insignificante.
+
+No se detectan fugas de memoria en la adición/eliminación de torres. La eliminación en TowerManager.js (splice en el array towers y delete en el Set de casillas ocupadas) mantiene las referencias sincronizadas con GameEngine.
+
+Lógica y Arquitectura:
+
+Buena separación de responsabilidades: Map gestiona únicamente la geometría de la rejilla; TowerManager la colección de entidades y la reserva física; GameEngine orquesta la economía (oro) y las reglas de negocio.
+
+El patrón UMD simplificado implementado en todos los módulos permite la ejecución fluida tanto en entorno Node.js para testing (node --test) como en cliente web mediante el objeto global window.
+
+Mantenibilidad:
+
+Código limpio, bien documentado mediante JSDoc y alineado a las especificaciones de la Tabla 1 del GDD. El manejo de totalInvested contempla correctamente la extrapolación a futuras mejoras de nivel (Fase 3).
+
+4. Veredicto Final y Pasos a Seguir
+
+VEREDICTO: APTO
+
+No se identificaron riesgos críticos en esta entrega. La suit de pruebas automatizadas pasa satisfactoriamente (
+35
+/
+35
+35/35 tests aprobados) cubriendo todos los escenarios límite (casillas fuera de límites, intentos de construcción sin oro, tipos de torre inexistentes y reventa repetida). Se autoriza el paso a la siguiente fase de desarrollo.
+
+¿Quieres que pasemos a revisar los Criterios de Aceptación de la Fase 3?
+Sí

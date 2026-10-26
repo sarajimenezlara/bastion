@@ -26,7 +26,7 @@ tiene al menos una prueba cuyo nombre empieza por su código (`CA-01`, `CA-02`, 
 | Fase | Alcance | Estado |
 | --- | --- | --- |
 | 1 | Módulos del core (`Vector2D`, `Enemy`, `Map`, `WaveManager`, `GameEngine`) con UMD | ✅ Completada |
-| 2 | Sistema de construcción: `Tower`, rejilla construible y costes | ⏳ Pendiente |
+| 2 | Sistema de construcción: `Tower`, `TowerManager`, rejilla construible, costes y reventa | ✅ Completada |
 | 3 | Combate, proyectiles, tolerancia de 8 px y tipos de daño | ⏳ Pendiente |
 | 4 | `WaveManager` completo, escalado de salud e integración del motor | ⏳ Pendiente |
 | 5 | `CanvasRenderer` y `UIController` (HTML/DOM) | ⏳ Pendiente |
@@ -42,9 +42,25 @@ Criterios cubiertos y verificados con `npm test`:
 
 Decisiones de diseño de la fase: [`docs/decisiones/fase-1.md`](docs/decisiones/fase-1.md).
 
+### Fase 2 — Construcción, terreno y reventa
+
+Criterios cubiertos y verificados con `npm test`:
+
+- **CA-04** — `Map.isCellBuildable` devuelve `false` en las casillas del camino serpentina (59 casillas), en las ocupadas por una torre y fuera de la rejilla; `true` en el resto.
+- **CA-05** — `GameEngine.placeTower` construye una Ballesta y baja el oro de 150 a 100 reservando la casilla; sin oro, casilla inválida u ocupada devuelve `false` sin alterar el estado.
+- **CA-06** — `GameEngine.sellTower` devuelve `Math.floor(totalInvertido × 0.70)` (coste base + mejoras) y libera la casilla.
+
+Piezas añadidas:
+
+- `src/core/Tower.js` — entidad con nivel, inversión acumulada y catálogo de la Tabla 1 (costes y estadísticas por nivel).
+- `src/core/TowerManager.js` — colección de torres, reserva/liberación de casillas y reventa inmediata.
+- `Map` — relleno de `pathCells`, control de casillas ocupadas e `isCellBuildable`.
+- `GameEngine` — `placeTower` y `sellTower` junto al `TowerManager`, compartiendo la colección `engine.towers`.
+
+Decisiones de diseño de la fase: [`docs/decisiones/fase-2.md`](docs/decisiones/fase-2.md).
+
 Fuera de alcance en esta fase (se implementan después según el roadmap):
 
-- `Map.isCellBuildable` y el relleno de `pathCells` → Fase 2 (CA-04).
-- `Tower`, `Projectile`, combate y tipos de daño → Fases 2 y 3.
+- Combate, proyectiles, tipos de daño y mejora de nivel (`Tower.upgrade`, CA-07 a CA-10) → Fase 3.
 - Generación de oleadas y escalado de salud → Fase 4 (CA-11).
 - Renderizado, HUD e `index.html` → Fases 5 y 6.
