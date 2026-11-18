@@ -43,7 +43,7 @@ agentes y comandos), y dónde está la evidencia de cada paso.
 | **Comandos** | `/entrevista`, `/planificar-fase`, `/construir-fase`, `/validar-fase`, `/informe-qa`, `/corregir`, `/verificar-entorno`, más `/prompt` y `/refactor` de clase. Inyectan datos reales con `` !`orden` `` y fijan `agent` y `model`. | `.opencode/commands/` |
 
 ### Modelo por papel
-
+ñññ
 Las cuotas gratuitas obligaron a repartir el trabajo: los Gemini Flash solo admiten 20 peticiones al
 día y un agente gasta una por cada paso.
 
